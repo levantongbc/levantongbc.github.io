@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Nhập Vi Phạm – Tổ Trưởng</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f1117; --bg2: #161820; --card: #1c1f2e; --card2: #22263a;
+  --border: #2d3154; --accent: #6c8ef5; --accent2: #a78bfa;
+  --green: #34d399; --red: #f87171; --yellow: #fbbf24; --orange: #fb923c;
+  --text: #e2e8f0; --text2: #94a3b8; --text3: #475569;
+  --tot: #34d399; --kha: #60a5fa; --dat: #fbbf24; --chuadat: #f87171;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px; min-height: 100vh; padding-bottom: 100px; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #1a1060 0%, #0f1117 100%);
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+}
+.header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.header h1 { font-size: 15px; font-weight: 800; line-height: 1.2; }
+.header p  { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+/* DATE BAR */
+.date-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.date-bar input, .date-bar select {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px; color: var(--text);
+  font-family: inherit; font-size: 12px; font-weight: 600; outline: none;
+  flex: 1; min-width: 0;
+}
+.date-bar input:focus, .date-bar select:focus { border-color: var(--accent); }
+
+/* SETUP SCREEN */
+.setup-screen { padding: 20px 16px; }
+.setup-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+.setup-card h2 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.setup-card p  { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.6; }
+.field-label { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 5px; margin-top: 12px; }
+.field-label:first-of-type { margin-top: 0; }
+.setup-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; color: var(--text);
+  font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s;
+}
+.setup-input:focus { border-color: var(--accent); }
+.setup-input.textarea { resize: vertical; line-height: 1.7; min-height: 120px; }
+.info-box { background: rgba(108,142,245,.1); border: 1px solid rgba(108,142,245,.3); border-radius: 10px; padding: 12px; font-size: 12px; color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+.info-box code { color: var(--accent); background: rgba(108,142,245,.15); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+
+/* BUTTONS */
+.btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 18px; border-radius: 12px; border: none; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; width: 100%; }
+.btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.btn-primary:hover { opacity: .88; }
+.btn-secondary { background: var(--card2); border: 1px solid var(--border); color: var(--text2); }
+.btn-danger { background: rgba(248,113,113,.15); border: 1px solid rgba(248,113,113,.4); color: var(--red); }
+.btn-green { background: linear-gradient(135deg, #059669, var(--green)); color: #fff; }
+.btn + .btn { margin-top: 8px; }
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 8px; width: auto; }
+
+/* MAIN SCREEN */
+.main-screen { padding: 14px 16px; display: none; }
+
+/* STUDENT SELECTOR */
+.section-title { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.student-btn {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 10px 8px; cursor: pointer;
+  transition: all .15s; text-align: center; position: relative;
+}
+.student-btn:active { transform: scale(.97); }
+.student-btn.selected { background: rgba(108,142,245,.15); border-color: var(--accent); }
+.student-btn.has-data { border-left: 3px solid var(--green); }
+.student-btn .sname { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.student-btn .sscore { font-size: 11px; margin-top: 3px; font-weight: 600; }
+.score-badge { position: absolute; top: 5px; right: 6px; font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 6px; }
+.score-tot  { background: rgba(52,211,153,.2); color: var(--tot); }
+.score-kha  { background: rgba(96,165,250,.2); color: var(--kha); }
+.score-dat  { background: rgba(251,191,36,.2); color: var(--dat); }
+.score-chua { background: rgba(248,113,113,.2); color: var(--chuadat); }
+
+/* INPUT PANEL */
+.input-panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; display: none; }
+.input-panel.show { display: block; }
+.panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.panel-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.panel-name { font-size: 15px; font-weight: 800; }
+.panel-score { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* SCORE DISPLAY */
+.score-display {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.score-big { font-size: 36px; font-weight: 900; line-height: 1; }
+.score-info { flex: 1; }
+.score-label { font-size: 11px; color: var(--text2); font-weight: 600; letter-spacing: .5px; }
+.score-rank { font-size: 16px; font-weight: 800; margin-top: 2px; }
+.score-breakdown { font-size: 11px; color: var(--text2); margin-top: 4px; line-height: 1.6; }
+
+/* DIEM TOT */
+.diem-tot-row {
+  background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.25);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.diem-tot-label { flex: 1; }
+.diem-tot-label b { font-size: 14px; font-weight: 700; color: var(--green); display: block; }
+.diem-tot-label span { font-size: 11px; color: var(--text2); }
+.counter { display: flex; align-items: center; gap: 0; }
+.counter-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card2); color: var(--text); font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+.counter-btn:active { transform: scale(.92); }
+.counter-val { width: 44px; text-align: center; font-size: 22px; font-weight: 900; color: var(--green); }
+
+/* VIOLATIONS */
+.vcat-title { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; padding: 10px 0 6px; }
+.vchip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px; border-radius: 10px; margin-bottom: 5px;
+  border: 1.5px solid var(--border); cursor: pointer; transition: all .15s;
+  background: var(--bg2);
+}
+.vchip:active { transform: scale(.98); }
+.vchip.checked { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.5); }
+.vchip-icon { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
+.vchip-text { flex: 1; }
+.vchip-label { font-size: 13px; color: var(--text2); font-weight: 600; }
+.vchip.checked .vchip-label { color: var(--text); }
+.vchip-minus { font-size: 11px; color: var(--red); font-weight: 700; }
+.chip-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .15s; }
+.vchip.checked .chip-check { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* SAVE BTN */
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--border); display: none; z-index: 40; }
+.save-bar.show { display: block; }
+
+/* WEEK SUMMARY */
+.week-summary { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+.week-summary h3 { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.summary-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; margin-bottom: 4px; background: var(--bg2); }
+.summary-name { flex: 1; font-size: 13px; font-weight: 600; }
+.summary-detail { font-size: 11px; color: var(--text2); }
+.summary-score { font-size: 16px; font-weight: 900; min-width: 32px; text-align: center; }
+.summary-rank { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+
+/* TOAST */
+.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; opacity: 0; transition: all .3s; z-index: 999; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.err { background: var(--red); }
+
+/* TABS */
+.nav-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.nav-tab { flex: 1; padding: 9px 6px; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer; text-align: center; transition: all .15s; }
+.nav-tab.active { background: rgba(108,142,245,.15); border-color: var(--accent); color: var(--accent); }
+
+/* SEND SECTION */
+.send-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.send-card h3 { font-size: 14px; font-weight: 800; margin-bottom: 10px; }
+.send-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; color: var(--text); font-family: inherit; font-size: 13px; outline: none; transition: border-color .2s; margin-bottom: 8px; }
+.send-input:focus { border-color: var(--accent); }
+.warn-box { background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.3); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #d4b84a; line-height: 1.7; margin-bottom: 10px; }
+/* SEND STATUS */
+.send-status { border-radius: 10px; padding: 10px 14px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display:none; }
+.send-status.pending { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); color: var(--yellow); display:block; }
+.send-status.success { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.4); color: var(--green); display:block; }
+.send-status.error   { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.4); color: var(--red); display:block; }
+.send-log { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 11px; color: var(--text2); line-height: 1.8; max-height: 120px; overflow-y: auto; margin-top: 8px; display:none; font-family: monospace; }
+.step-row { display:flex; align-items:center; gap:8px; padding: 8px 10px; border-radius: 8px; margin-bottom:4px; background: var(--bg2); font-size:12px; }
+.step-icon { font-size:14px; width:20px; text-align:center; }
+.step-text { flex:1; color:var(--text2); }
+.step-row.done .step-text { color: var(--green); }
+.step-row.active .step-text { color: var(--yellow); }
+.step-row.fail .step-text { color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-top">
+    <div class="logo">📋</div>
+    <div>
+      <h1>Nhật Ký Vi Phạm – Tổ Trưởng</h1>
+      <p id="headerSub">Nhập vi phạm & điểm tốt hàng ngày</p>
+    </div>
+  </div>
+  <div class="date-bar">
+    <input type="date" id="dateInput">
+    <select id="weekInput" style="flex:0 0 auto;width:auto;">
+      <option value="">-- Tuần --</option>
+    </select>
+    <select id="toInput" style="flex:0 0 auto;width:auto;">
+      <option value="">-- Tổ --</option>
+      <option value="1">Tổ 1</option>
+      <option value="2">Tổ 2</option>
+      <option value="3">Tổ 3</option>
+      <option value="4">Tổ 4</option>
+    </select>
+  </div>
+</header>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-card">
+    <h2>⚙️ Thiết lập hệ thống</h2>
+    <p>Giáo viên thiết lập 1 lần, tổ trưởng dùng mãi mãi.</p>
+
+    <div class="info-box">
+      📌 Nhập danh sách mỗi tổ theo định dạng:<br>
+      <code>Họ tên | email phụ huynh</code><br>
+      Ví dụ: <code>Nguyễn Văn An | binhph@gmail.com</code>
+    </div>
+
+    <div class="field-label">Tên giáo viên chủ nhiệm</div>
+    <input type="text" class="setup-input" id="teacherName" placeholder="VD: Thầy Nguyễn Văn A">
+
+    <div class="field-label">Tên lớp</div>
+    <input type="text" class="setup-input" id="className" placeholder="VD: 8A1">
+
+    <div class="field-label">Học kỳ</div>
+    <select class="setup-input" id="hocky">
+      <option value="1">Học kỳ 1</option>
+      <option value="2">Học kỳ 2</option>
+    </select>
+
+    <div class="field-label">Danh sách Tổ 1 (12 học sinh)</div>
+    <textarea class="setup-input textarea" id="to1" placeholder="Nguyễn Văn An | an.ph@gmail.com&#10;Trần Thị Bích | bich.ph@gmail.com&#10;..."></textarea>
+
+    <div class="field-label">Danh sách Tổ 2</div>
+    <textarea class="setup-input textarea" id="to2" placeholder="..."></textarea>
+
+    <div class="field-label">Danh sách Tổ 3</div>
+    <textarea class="setup-input textarea" id="to3" placeholder="..."></textarea>
+
+    <div class="field-label">Danh sách Tổ 4</div>
+    <textarea class="setup-input textarea" id="to4" placeholder="..."></textarea>
+
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="saveSetup()">💾 Lưu & bắt đầu</button>
+      <button class="btn btn-secondary" onclick="loadSample()" style="margin-top:8px;">📋 Tải dữ liệu mẫu</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN SCREEN -->
+<div class="main-screen" id="mainScreen">
+  <div class="nav-tabs">
+    <div class="nav-tab active" id="tabNhap" onclick="switchMainTab('nhap')">✏️ Nhập hôm nay</div>
+    <div class="nav-tab" id="tabTuan" onclick="switchMainTab('tuan')">📊 Tổng tuần</div>
+    <div class="nav-tab" id="tabGui" onclick="switchMainTab('gui')">📧 Gửi email</div>
+  </div>
+
+  <!-- TAB NHAP -->
+  <div id="panelNhap">
+    <div class="section-title">Chọn học sinh trong tổ</div>
+    <div class="student-grid" id="studentGrid"></div>
+
+    <div class="input-panel" id="inputPanel">
+      <div class="panel-header">
+        <div class="panel-avatar" id="panelAvatar"></div>
+        <div>
+          <div class="panel-name" id="panelName"></div>
+          <div class="panel-score" id="panelMeta"></div>
+        </div>
+      </div>
+
+      <!-- SCORE DISPLAY -->
+      <div class="score-display">
+        <div class="score-big" id="scoreBig" style="color:var(--tot);">20</div>
+        <div class="score-info">
+          <div class="score-label">ĐIỂM RÈN LUYỆN TUẦN</div>
+          <div class="score-rank" id="scoreRank">Tốt</div>
+          <div class="score-breakdown" id="scoreBreakdown">20 + 0 cộng - 0 trừ = 20</div>
+        </div>
+      </div>
+
+      <!-- BUỔI NGHỈ -->
+      <div class="diem-tot-row" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3);">
+        <div class="diem-tot-label">
+          <b style="color:var(--yellow);">🌅 Nghỉ buổi sáng</b>
+          <span>Hôm nay nghỉ buổi sáng không?</span>
+        </div>
+        <div class="counter">
+          <button class="counter-btn" onclick="changeAbsence('sang',-1)" style="border-color:rgba(251,191,36,.4);">−</button>
+          <div class="counter-val" id="absenceSangVal" style="color:var(--yellow);">0</div>
+          <button class="counter-btn" onclick="changeAbsence('sang',1)" style="border-color:rgba(251,191,36,.4);">+</button>
+        </div>
+      </div>
+      <div class="diem-tot-row" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3);margin-top:-8px;">
+        <div class="diem-tot-label">
+          <b style="color:var(--yellow);">🌆 Nghỉ buổi chiều</b>
+          <span>Hôm nay nghỉ buổi chiều không?</span>
+        </div>
+        <div class="counter">
+          <button class="counter-btn" onclick="changeAbsence('chieu',-1)" style="border-color:rgba(251,191,36,.4);">−</button>
+          <div class="counter-val" id="absenceChieuVal" style="color:var(--yellow);">0</div>
+          <button class="counter-btn" onclick="changeAbsence('chieu',1)" style="border-color:rgba(251,191,36,.4);">+</button>
+        </div>
+      </div>
+      <!-- Hiển thị tổng buổi nghỉ cả học kỳ -->
+      <div id="totalAbsenceRow" style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--text2);display:none;">
+        📊 Tổng buổi nghỉ cả học kỳ: <b id="totalAbsenceVal" style="color:var(--red);font-size:15px;">0</b> buổi
+        <span id="absenceWarnBadge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:6px;"></span>
+      </div>
+
+      <!-- ĐIỂM TỐT -->
+      <div class="diem-tot-row">
+        <div class="diem-tot-label">
+          <b>⭐ Điểm tốt hôm nay</b>
+          <span>Số lần được điểm ≥ 8 (+1 mỗi lần)</span>
+        </div>
+        <div class="counter">
+          <button class="counter-btn" onclick="changeGoodScore(-1)">−</button>
+          <div class="counter-val" id="goodScoreVal">0</div>
+          <button class="counter-btn" onclick="changeGoodScore(1)">+</button>
+        </div>
+      </div>
+
+      <!-- VIOLATIONS -->
+      <div id="violationList"></div>
+    </div>
+  </div>
+
+  <!-- TAB TUAN -->
+  <div id="panelTuan" style="display:none;">
+    <div class="week-summary" id="weekSummaryContent">
+      <h3>📊 Tổng kết tuần <span id="weekLabel"></span></h3>
+      <div id="weekRows"></div>
+    </div>
+    <button class="btn btn-green" onclick="exportWeekCSV()">⬇️ Xuất CSV tuần này</button>
+  </div>
+
+  <!-- TAB GUI -->
+  <div id="panelGui" style="display:none;">
+
+    <!-- BƯỚC 1: URL -->
+    <div class="send-card">
+      <h3>⚙️ Bước 1 – Dán URL Apps Script</h3>
+      <div class="info-box" style="margin-bottom:10px;">
+        📌 URL lấy từ Google Sheets → Apps Script → Deploy → Web App.<br>
+        Chỉ cần dán <b>1 lần</b>, hệ thống tự nhớ.
+      </div>
+      <label style="font-size:11px;color:var(--text2);font-weight:700;display:block;margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;">Apps Script URL</label>
+      <input class="send-input" type="url" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveScriptUrl()">
+      <div id="urlStatus" style="font-size:11px;color:var(--text2);margin-top:4px;"></div>
+    </div>
+
+    <!-- BƯỚC 2: Xem trước & Gửi -->
+    <div class="send-card">
+      <h3>📤 Bước 2 – Gửi dữ liệu tuần lên Sheets</h3>
+      <div id="sendPreview" style="margin-bottom:10px;"></div>
+      <div class="send-status" id="sendStatus"></div>
+      <div class="send-log" id="sendLog"></div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn btn-green" id="btnSend" onclick="sendToSheetsV2()" style="flex:2;">📤 Gửi tổng hợp lên Sheets</button>
+        <button class="btn btn-secondary" onclick="exportWeekCSV()" style="flex:1;">⬇️ CSV</button>
+      </div>
+    </div>
+
+    <!-- HƯỚNG DẪN -->
+    <div class="send-card">
+      <h3>📋 Lấy code Apps Script</h3>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+        <div class="step-row"><span class="step-icon">1️⃣</span><span class="step-text">Mở Google Sheets → <b>Tiện ích mở rộng → Apps Script</b></span></div>
+        <div class="step-row"><span class="step-icon">2️⃣</span><span class="step-text">Xóa code cũ, dán code bên dưới → <b>Lưu</b></span></div>
+        <div class="step-row"><span class="step-icon">3️⃣</span><span class="step-text"><b>Deploy → New deployment → Web App → Anyone → Deploy</b></span></div>
+        <div class="step-row"><span class="step-icon">4️⃣</span><span class="step-text">Copy URL → Dán vào ô trên → Xong!</span></div>
+      </div>
+      <button class="btn btn-secondary" onclick="showScript()">👁️ Xem & Copy code Apps Script</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar" id="saveBar">
+  <button class="btn btn-primary" onclick="saveStudentData()">💾 Lưu dữ liệu hôm nay</button>
+</div>
+
+<!-- SCRIPT MODAL -->
+<div id="scriptModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;padding:16px;overflow-y:auto;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:600px;margin:0 auto;">
+    <h2 style="font-size:16px;font-weight:800;margin-bottom:12px;">📋 Google Apps Script</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">
+      1. Vào <b>Google Sheets</b> → Tiện ích mở rộng → Apps Script<br>
+      2. Dán code bên dưới → Lưu<br>
+      3. Bấm <b>Deploy → New deployment → Web app</b><br>
+      4. Chọn "Anyone" → Deploy → Copy URL → Dán vào tab Gửi email
+    </p>
+    <textarea id="scriptCodeArea" readonly onclick="this.select()" style="width:100%;height:320px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:#4ade80;font-family:monospace;font-size:11px;line-height:1.6;resize:none;outline:none;"></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn btn-secondary" onclick="document.getElementById('scriptModal').style.display='none'" style="flex:1;">Đóng</button>
+      <button class="btn btn-primary" onclick="copyScript()" style="flex:1;">📋 Copy code</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── VIOLATIONS ────────────────────────────────────────────────────────────────
+const VIOLATIONS = [
+  { cat:"🤝 Đạo đức & Ứng xử", items:[
+    { id:"v17", icon:"😤", label:"Vô lễ với giáo viên", minus:2 },
+    { id:"v18", icon:"🥊", label:"Gây gổ / đánh nhau", minus:5 },
+    { id:"v19", icon:"😈", label:"Nói tục / chửi thề", minus:2 },
+    { id:"v20", icon:"🤫", label:"Gian lận kiểm tra", minus:2 },
+    { id:"v21", icon:"🙄", label:"Thiếu tôn trọng bạn", minus:2 },
+  ]},
+  { cat:"🏫 Nề nếp & Chuyên cần", items:[
+    { id:"v01", icon:"🔴", label:"Nghỉ học không phép", minus:1 },
+    { id:"v02", icon:"⏰", label:"Đi học trễ / trễ tiết", minus:1 },
+    { id:"v03", icon:"🚶", label:"Bỏ tiết / trốn học", minus:1 },
+    { id:"v04", icon:"🚪", label:"Ra ngoài không xin phép", minus:1 },
+    { id:"v05", icon:"😴", label:"Ngủ gật trong giờ", minus:1 },
+  ]},
+  { cat:"👔 Đồng phục & Tác phong", items:[
+    { id:"v06", icon:"👕", label:"Không mặc đồng phục", minus:1 },
+    { id:"v07", icon:"🎒", label:"Không đeo khăn / phù hiệu", minus:1 },
+    { id:"v08", icon:"💇", label:"Tóc không đúng quy định", minus:1 },
+    { id:"v09", icon:"💄", label:"Trang điểm / sơn móng", minus:1 },
+  ]},
+  { cat:"📚 Học tập", items:[
+    { id:"v11", icon:"📓", label:"Không thuộc bài", minus:1 },
+    { id:"v12", icon:"📝", label:"Không làm bài tập", minus:1 },
+    { id:"v13", icon:"📖", label:"Không mang sách vở", minus:1 },
+    { id:"v14", icon:"🗣️", label:"Nói chuyện trong giờ", minus:1 },
+    { id:"v15", icon:"📱", label:"Dùng điện thoại trong giờ", minus:1 },
+  ]},
+  { cat:"🏠 Vệ sinh & Sổ sách", items:[
+    { id:"v22", icon:"🗑️", label:"Xả rác không đúng nơi", minus:1 },
+    { id:"v23", icon:"🧹", label:"Không vệ sinh lớp", minus:1 },
+    { id:"v26", icon:"📜", label:"Không ký sổ liên lạc", minus:1 },
+    { id:"v28", icon:"💰", label:"Chưa nộp khoản theo quy định", minus:1 },
+  ]},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let config = { teacher:'', className:'', hocky:'1', students:[] }; // students: [{id,name,email,to}]
+let selectedId = null;
+let todayData  = {}; // { studentId: { goodScore, violations:Set } }
+let weekData   = {}; // { studentId: { days:[{date,goodScore,violations:[]}], weekScore, rank, action } }
+let currentMainTab = 'nhap';
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function init() {
+  const d = new Date();
+  document.getElementById('dateInput').value = d.toISOString().slice(0,10);
+  fillWeekOptions();
+
+  const saved = localStorage.getItem('to_truong_v1');
+  if (saved) {
+    const data = JSON.parse(saved);
+    config = data.config || config;
+    weekData = {};
+    Object.entries(data.weekData||{}).forEach(([k,v]) => {
+      weekData[k] = v;
+      if (v.violations) v.violations = v.violations; // keep as array
+    });
+    loadTodayData();
+    showMain();
+  }
+
+  document.getElementById('dateInput').addEventListener('change', loadTodayData);
+  document.getElementById('weekInput').addEventListener('change', () => { loadTodayData(); renderWeekSummary(); updateSendPreview(); });
+  document.getElementById('toInput').addEventListener('change', () => { renderStudentGrid(); });
+}
+
+function fillWeekOptions() {
+  const sel = document.getElementById('weekInput');
+  sel.innerHTML = '<option value="">-- Tuần --</option>';
+  for (let w = 1; w <= 52; w++) {
+    const opt = document.createElement('option');
+    opt.value = w; opt.textContent = 'Tuần ' + w;
+    sel.appendChild(opt);
+  }
+  // auto-select current week
+  const now = new Date();
+  now.setUTCDate(now.getUTCDate() + 4 - (now.getUTCDay()||7));
+  const w = Math.ceil((((now - new Date(Date.UTC(now.getUTCFullYear(),0,1)))/86400000)+1)/7);
+  sel.value = w;
+}
+
+// ── SETUP ─────────────────────────────────────────────────────────────────────
+function saveSetup() {
+  const teacher = document.getElementById('teacherName').value.trim();
+  const cls     = document.getElementById('className').value.trim();
+  const hk      = document.getElementById('hocky').value;
+  if (!teacher) { showToast('Vui lòng nhập tên giáo viên!', true); return; }
+
+  config = { teacher, className:cls, hocky:hk, students:[] };
+  weekData = {};
+
+  [1,2,3,4].forEach(to => {
+    const raw = document.getElementById('to'+to).value.trim();
+    if (!raw) return;
+    raw.split('\n').forEach((line,i) => {
+      line = line.trim(); if (!line) return;
+      const parts = line.split('|');
+      const name  = parts[0].trim();
+      const email = parts[1] ? parts[1].trim() : '';
+      const id    = `to${to}_${i+1}`;
+      config.students.push({ id, name, email, to: String(to), stt:i+1 });
+      weekData[id] = { days:[], weekScore:20, rank:'Tốt', action:'', timesLow:0 };
+    });
+  });
+
+  saveAll();
+  showMain();
+}
+
+function loadSample() {
+  document.getElementById('teacherName').value = 'Thầy Nguyễn Văn A';
+  document.getElementById('className').value = '8A1';
+  const names = [
+    ['Nguyễn Văn An','Trần Thị Bích','Lê Văn Cường','Phạm Thị Diệu',
+     'Hoàng Văn Em','Đặng Thị Phương','Vũ Văn Giang','Bùi Thị Hà',
+     'Đỗ Văn Hùng','Ngô Thị Hương','Dương Văn Khoa','Lý Thị Linh'],
+    ['Mai Văn Minh','Phan Thị Nam','Trịnh Văn Phong','Đinh Thị Quỳnh',
+     'Tô Văn Rồng','Lương Thị Sáng','Châu Văn Tài','Hồ Thị Uyên',
+     'Nguyễn Văn Vinh','Trần Thị Xuân','Lê Văn Yên','Phạm Thị Zoe'],
+    ['Hoàng Văn Ân','Đặng Thị Bảo','Vũ Văn Chiến','Bùi Thị Dung',
+     'Đỗ Văn Đạt','Ngô Thị Én','Dương Văn Phát','Lý Thị Giang',
+     'Mai Văn Hậu','Phan Thị Inh','Trịnh Văn Kiên','Đinh Thị Lụa'],
+    ['Tô Văn Mẫn','Lương Thị Ngân','Châu Văn Oai','Hồ Thị Phúc',
+     'Nguyễn Văn Quý','Trần Thị Rạng','Lê Văn Sáng','Phạm Thị Tuyết',
+     'Hoàng Văn Ước','Đặng Thị Vân','Vũ Văn Xanh','Bùi Thị Yến'],
+  ];
+  [1,2,3,4].forEach(to => {
+    document.getElementById('to'+to).value = names[to-1].map((n,i) => `${n} | ph${i+1}to${to}@gmail.com`).join('\n');
+  });
+}
+
+function showMain() {
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display = 'block';
+  document.getElementById('headerSub').textContent = `${config.className} – ${config.teacher}`;
+  loadTodayData();
+  renderStudentGrid();
+  renderWeekSummary();
+  buildScriptCode();
+}
+
+// ── TODAY DATA ────────────────────────────────────────────────────────────────
+function loadTodayData() {
+  const date = document.getElementById('dateInput').value;
+  const week = document.getElementById('weekInput').value;
+  todayData = {};
+  config.students.forEach(s => {
+    const wd = weekData[s.id];
+    if (!wd) return;
+    const existing = wd.days.find(d => d.date === date && d.week === week);
+    if (existing) {
+      todayData[s.id] = { goodScore: existing.goodScore, violations: new Set(existing.violations), absenceSang: existing.absenceSang||0, absenceChieu: existing.absenceChieu||0 };
+    } else {
+      todayData[s.id] = { goodScore: 0, violations: new Set(), absenceSang:0, absenceChieu:0 };
+    }
+  });
+  renderStudentGrid();
+}
+
+// ── STUDENT GRID ──────────────────────────────────────────────────────────────
+function renderStudentGrid() {
+  const toFilter = document.getElementById('toInput').value;
+  const grid = document.getElementById('studentGrid');
+  grid.innerHTML = '';
+
+  const filtered = toFilter ? config.students.filter(s => s.to === toFilter) : config.students;
+
+  filtered.forEach(s => {
+    const wd  = getWeekScore(s.id);
+    const td  = todayData[s.id] || { goodScore:0, violations:new Set() };
+    const hasData = td.goodScore > 0 || td.violations.size > 0;
+    const rankClass = getRankClass(wd.rank);
+
+    const div = document.createElement('div');
+    div.className = 'student-btn'+(s.id===selectedId?' selected':'')+(hasData?' has-data':'');
+    div.innerHTML = `
+      <div class="score-badge ${rankClass}">${wd.score}đ</div>
+      <div class="sname">${s.name}</div>
+      <div class="sscore" style="color:var(--${rankClass.replace('score-','')==='chua'?'chuadat':rankClass.replace('score-','')});">${wd.rank}</div>
+    `;
+    div.onclick = () => selectStudent(s.id);
+    grid.appendChild(div);
+  });
+}
+
+function getRankClass(rank) {
+  if (rank==='Tốt') return 'score-tot';
+  if (rank==='Khá') return 'score-kha';
+  if (rank==='Đạt') return 'score-dat';
+  return 'score-chua';
+}
+
+// ── SELECT STUDENT ────────────────────────────────────────────────────────────
+function selectStudent(id) {
+  selectedId = id;
+  const s  = config.students.find(x => x.id===id);
+  const td = todayData[id] || { goodScore:0, violations:new Set() };
+
+  document.getElementById('inputPanel').classList.add('show');
+  document.getElementById('saveBar').classList.add('show');
+
+  const initStr = s.name.split(' ');
+  const av = initStr.length>=2 ? initStr[initStr.length-2][0]+initStr[initStr.length-1][0] : s.name.slice(0,2);
+  document.getElementById('panelAvatar').textContent = av;
+  document.getElementById('panelName').textContent = s.name;
+  document.getElementById('panelMeta').textContent = `Tổ ${s.to} · ${s.email||'Chưa có email'}`;
+  document.getElementById('goodScoreVal').textContent = td.goodScore;
+  document.getElementById('absenceSangVal').textContent = td.absenceSang||0;
+  document.getElementById('absenceChieuVal').textContent = td.absenceChieu||0;
+
+  // Hiện tổng buổi nghỉ cả học kỳ
+  const total = getTotalAbsence(id);
+  const absRow = document.getElementById('totalAbsenceRow');
+  const absVal = document.getElementById('totalAbsenceVal');
+  const absBadge = document.getElementById('absenceWarnBadge');
+  absRow.style.display = 'block';
+  absVal.textContent = total;
+  if (total >= 40) { absBadge.style.display='inline'; absBadge.textContent='⚠️ Mốc 40 buổi!'; }
+  else if (total >= 30) { absBadge.style.display='inline'; absBadge.textContent='⚠️ Mốc 30 buổi!'; }
+  else if (total >= 15) { absBadge.style.display='inline'; absBadge.textContent='⚠️ Mốc 15 buổi!'; }
+  else { absBadge.style.display='none'; }
+
+  renderViolations();
+  updateScoreDisplay();
+  renderStudentGrid();
+  document.getElementById('inputPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ── VIOLATIONS ────────────────────────────────────────────────────────────────
+function renderViolations() {
+  const td = todayData[selectedId] || { goodScore:0, violations:new Set() };
+  let html = '';
+  VIOLATIONS.forEach(cat => {
+    html += `<div class="vcat-title">${cat.cat}</div>`;
+    cat.items.forEach(v => {
+      const c = td.violations.has(v.id);
+      html += `<div class="vchip${c?' checked':''}" onclick="toggleV('${v.id}')">
+        <span class="vchip-icon">${v.icon}</span>
+        <div class="vchip-text">
+          <div class="vchip-label">${v.label}</div>
+          <div class="vchip-minus">-${v.minus} điểm</div>
+        </div>
+        <span class="chip-check">${c?'✓':''}</span>
+      </div>`;
+    });
+  });
+  document.getElementById('violationList').innerHTML = html;
+}
+
+function toggleV(vid) {
+  if (!selectedId) return;
+  if (!todayData[selectedId]) todayData[selectedId] = { goodScore:0, violations:new Set() };
+  const v = todayData[selectedId].violations;
+  v.has(vid) ? v.delete(vid) : v.add(vid);
+  renderViolations();
+  updateScoreDisplay();
+}
+
+function changeAbsence(buoi, delta) {
+  if (!selectedId) return;
+  if (!todayData[selectedId]) todayData[selectedId] = { goodScore:0, violations:new Set(), absenceSang:0, absenceChieu:0 };
+  const key = buoi==='sang' ? 'absenceSang' : 'absenceChieu';
+  todayData[selectedId][key] = Math.max(0, Math.min(1, (todayData[selectedId][key]||0) + delta));
+  document.getElementById('absenceSangVal').textContent = todayData[selectedId].absenceSang||0;
+  document.getElementById('absenceChieuVal').textContent = todayData[selectedId].absenceChieu||0;
+  // Cập nhật tổng (tránh đếm đôi ngày hôm nay nếu đã lưu trước đó)
+  const _date = document.getElementById('dateInput').value;
+  const _week = document.getElementById('weekInput').value;
+  const _wd2 = weekData[selectedId];
+  const _savedRest = _wd2 ? (_wd2.days||[]).filter(d => !(d.date===_date && d.week===_week))
+    .reduce((sum, d) => sum + (d.absenceSang||0) + (d.absenceChieu||0), 0) : 0;
+  const total = _savedRest + (todayData[selectedId].absenceSang||0) + (todayData[selectedId].absenceChieu||0);
+  document.getElementById('totalAbsenceVal').textContent = total;
+}
+
+function getTotalAbsence(id) {
+  const wd = weekData[id];
+  if (!wd) return 0;
+  return (wd.days||[]).reduce((sum, d) => sum + (d.absenceSang||0) + (d.absenceChieu||0), 0);
+}
+
+function checkAbsenceMilestone(id) {
+  const wd = weekData[id];
+  if (!wd) return null;
+  const total = getTotalAbsence(id);
+  const notified = wd.absenceNotified || [];
+  for (const moc of [15, 30, 40]) {
+    if (total >= moc && !notified.includes(moc)) {
+      wd.absenceNotified = [...notified, moc];
+      return moc;
+    }
+  }
+  return null;
+}
+
+function changeGoodScore(delta) {
+  if (!selectedId) return;
+  if (!todayData[selectedId]) todayData[selectedId] = { goodScore:0, violations:new Set() };
+  todayData[selectedId].goodScore = Math.max(0, (todayData[selectedId].goodScore||0) + delta);
+  document.getElementById('goodScoreVal').textContent = todayData[selectedId].goodScore;
+  updateScoreDisplay();
+}
+
+// ── SCORE CALCULATION ─────────────────────────────────────────────────────────
+function calcWeekScore(id) {
+  const week = document.getElementById('weekInput').value;
+  const wd   = weekData[id];
+  if (!wd) return { score:20, rank:'Tốt', plus:0, minus:0 };
+
+  let totalGood = 0, totalMinus = 0;
+
+  // Sum all days in this week
+  wd.days.filter(d => d.week === week).forEach(d => {
+    totalGood += d.goodScore || 0;
+    (d.violations||[]).forEach(vid => {
+      VIOLATIONS.forEach(cat => {
+        const v = cat.items.find(x => x.id===vid);
+        if (v) totalMinus += v.minus;
+      });
+    });
+  });
+
+  // Also add today's unsaved data
+  const td = todayData[id];
+  if (td) {
+    const todayDate = document.getElementById('dateInput').value;
+    const alreadySaved = wd.days.find(d => d.date===todayDate && d.week===week);
+    if (!alreadySaved) {
+      totalGood += td.goodScore || 0;
+      td.violations.forEach(vid => {
+        VIOLATIONS.forEach(cat => {
+          const v = cat.items.find(x => x.id===vid);
+          if (v) totalMinus += v.minus;
+        });
+      });
+    }
+  }
+
+  const score = Math.max(0, 20 + totalGood - totalMinus);
+  const rank  = getrank(score);
+  return { score, rank, plus:totalGood, minus:totalMinus };
+}
+
+function getWeekScore(id) {
+  return calcWeekScore(id);
+}
+
+function getAction(id, rank) {
+  if (rank==='Tốt' || rank==='Khá') return '';
+  const wd = weekData[id];
+  const count = (wd.timesLow||0) + 1;
+  if (count===1) return '';
+  if (count<=3) return 'Viết tường trình';
+  if (count<=5) return 'Viết cam kết';
+  return 'Viết tự kiểm';
+}
+
+function getRankColor(rank) {
+  if (rank==='Tốt') return 'var(--tot)';
+  if (rank==='Khá') return 'var(--kha)';
+  if (rank==='Đạt') return 'var(--dat)';
+  return 'var(--chuadat)';
+}
+
+function getrank(score) {
+  if (score>=17) return 'Tốt';
+  if (score>=14) return 'Khá';
+  if (score>=11) return 'Đạt';
+  return 'Chưa đạt';
+}
+
+function updateScoreDisplay() {
+  const ws = calcWeekScore(selectedId);
+  const color = getRankColor(ws.rank);
+  document.getElementById('scoreBig').textContent = ws.score;
+  document.getElementById('scoreBig').style.color = color;
+  document.getElementById('scoreRank').textContent = ws.rank;
+  document.getElementById('scoreRank').style.color = color;
+  document.getElementById('scoreBreakdown').textContent =
+    `20 + ${ws.plus} điểm tốt - ${ws.minus} vi phạm = ${ws.score}`;
+}
+
+// ── TẠO WORD BIÊN BẢN TỰ ĐỘNG ────────────────────────────────────────────────
+async function taoWordBienBan(id, moc) {
+  const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+          AlignmentType, BorderStyle, WidthType, ShadingType, VerticalAlign,
+          LevelFormat } = docx;
+
+  const s   = config.students.find(x => x.id === id);
+  const wd  = weekData[id];
+  if (!s || !wd) return;
+
+  const total      = getTotalAbsence(id);
+  const allWeeks   = [...new Set((wd.days||[]).map(d=>d.week))].sort((a,b)=>+a-+b);
+  const weekScores = allWeeks.map(w => calcWeekScoreForWeek(id, w));
+  const weekRanks  = weekScores.map(ws => ws.rank);
+  const avgScore   = weekScores.length ? (weekScores.reduce((a,b)=>a+b.score,0)/weekScores.length).toFixed(2) : '20.00';
+  const timesLow   = wd.timesLow || 0;
+  const ngayLap    = new Date().toLocaleDateString('vi-VN');
+
+  // Vi phạm nổi bật: đếm tần suất
+  const vCount = {};
+  (wd.days||[]).forEach(d => {
+    (d.violations||[]).forEach(vid => { vCount[vid] = (vCount[vid]||0) + 1; });
+  });
+  const topV = Object.entries(vCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([vid,cnt]) => {
+    for (const cat of VIOLATIONS) { const v=cat.items.find(x=>x.id===vid); if(v) return `${v.label} (${cnt} lần)`; }
+    return '';
+  }).filter(Boolean);
+
+  const strengths = [];
+  const weaknesses = [];
+  const bestScore = Math.max(...weekScores.map(w=>w.score));
+  const bestWeeks = weekScores.filter(w=>w.rank==='Tốt').length;
+  if (bestWeeks > 0) strengths.push(`Có ${bestWeeks} tuần xếp loại Tốt`);
+  if (weekScores.some(w=>w.plus>0)) strengths.push(`Tích cực đạt điểm ≥8, cộng điểm rèn luyện`);
+  if (!vCount['v18'] && !vCount['v17']) strengths.push(`Không vi phạm đạo đức nghiêm trọng`);
+  if (strengths.length === 0) strengths.push('Có cố gắng trong một số tuần học');
+  weaknesses.push(`Tổng cộng đã nghỉ ${total} buổi học`);
+  if (timesLow > 0) weaknesses.push(`Có ${timesLow} lần xếp loại Đạt/Chưa đạt`);
+  if (topV.length > 0) weaknesses.push(`Vi phạm nhiều: ${topV[0]}`);
+
+  const mocLabel  = {15:'lần thứ nhất (15 buổi)',30:'lần thứ hai (30 buổi)',40:'lần thứ ba (40 buổi)'};
+  const yeuCau    = {15:'Thông báo, nhắc nhở và theo dõi chặt chẽ',30:'Họp phụ huynh lần 2, lập kế hoạch hỗ trợ',40:'Họp Hội đồng kỷ luật, xem xét biện pháp xử lý'};
+
+  // Helper
+  const bdr = { style: BorderStyle.SINGLE, size: 1, color: '999999' };
+  const bdrs = { top:bdr, bottom:bdr, left:bdr, right:bdr };
+  const noB = { style: BorderStyle.NONE, size:0, color:'FFFFFF' };
+  const noBdrs = { top:noB,bottom:noB,left:noB,right:noB };
+
+  const P = (text, o={}) => new Paragraph({
+    alignment: o.align||AlignmentType.LEFT,
+    spacing: { before:o.before||0, after:o.after||80 },
+    children: [new TextRun({ text, bold:o.bold||false, size:o.size||24,
+      font:'Times New Roman', color:o.color||'000000', italics:o.italic||false,
+      underline: o.underline?{}:undefined })]
+  });
+
+  const PM = (runs, o={}) => new Paragraph({
+    alignment: o.align||AlignmentType.LEFT,
+    spacing: { before:o.before||0, after:o.after||80 },
+    children: runs.map(r => new TextRun({ text:r.text, bold:r.bold||false,
+      size:o.size||24, font:'Times New Roman', color:r.color||'000000' }))
+  });
+
+  const C = (children, o={}) => new TableCell({
+    borders: o.noBorder?noBdrs:bdrs,
+    width: { size:o.w||4500, type:WidthType.DXA },
+    shading: o.fill?{fill:o.fill,type:ShadingType.CLEAR}:undefined,
+    verticalAlign: VerticalAlign.CENTER,
+    margins: { top:80,bottom:80,left:120,right:120 },
+    children,
+  });
+
+  const R = cells => new TableRow({ children: cells });
+
+  const colW = allWeeks.length > 0 ? Math.floor(8155/allWeeks.length) : 1000;
+
+  const doc = new Document({
+    numbering: { config: [{ reference:'bullets', levels:[{ level:0, format:LevelFormat.BULLET,
+      text:'-', alignment:AlignmentType.LEFT,
+      style:{ paragraph:{ indent:{ left:360, hanging:180 } } } }] }] },
+    styles: { default:{ document:{ run:{ font:'Times New Roman', size:24 } } } },
+    sections: [{ properties: { page: {
+      size:{ width:11906, height:16838 },
+      margin:{ top:1134, right:850, bottom:1134, left:1701 }
+    }}, children: [
+
+      P('CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM', { bold:true, size:26, align:AlignmentType.CENTER, after:0 }),
+      P('Độc lập – Tự do – Hạnh phúc', { bold:true, size:24, align:AlignmentType.CENTER, after:0, underline:true }),
+      P('──────────────────────', { align:AlignmentType.CENTER, after:120, color:'666666' }),
+
+      new Table({ width:{size:9355,type:WidthType.DXA}, columnWidths:[4677,4678], rows:[R([
+        C([P('TRƯỜNG THCS LƯƠNG PHI', {bold:true,size:22,align:AlignmentType.CENTER,after:0}),
+           P('Xã Ô Lâm, Tri Tôn, An Giang', {size:20,align:AlignmentType.CENTER,italic:true})],
+          {noBorder:true,w:4677}),
+        C([P('Ô Lâm, ngày ' + ngayLap.replace(/(\d+)\/(\d+)\/(\d+)/,'$1 tháng $2 năm $3'),
+           {size:22,align:AlignmentType.CENTER,italic:true})], {noBorder:true,w:4678}),
+      ])]}),
+
+      P('', {after:80}),
+      P('BIÊN BẢN HỌP PHỤ HUYNH', {bold:true,size:32,align:AlignmentType.CENTER,after:0}),
+      P('V/v: Học sinh nghỉ học đạt mốc ' + moc + ' buổi – Học kỳ ' + config.hocky,
+        {bold:true,size:24,align:AlignmentType.CENTER,after:200,italic:true,color:'C00000'}),
+
+      P('I. THÔNG TIN CHUNG', {bold:true,size:26,before:80,after:80,underline:true}),
+      new Table({ width:{size:9355,type:WidthType.DXA}, columnWidths:[3000,6355], rows:[
+        R([C([P('Họ và tên học sinh:',{bold:true,size:22})],{fill:'EBF3FB',w:3000}), C([P(s.name,{bold:true,size:22})],{w:6355})]),
+        R([C([P('Lớp / Tổ:',{bold:true,size:22})],{fill:'EBF3FB',w:3000}), C([P((config.className||'') + ' – ' + s.to,{size:22})],{w:6355})]),
+        R([C([P('Năm học:',{bold:true,size:22})],{fill:'EBF3FB',w:3000}), C([P('2025–2026 – Học kỳ ' + (config.hocky||'1'),{size:22})],{w:6355})]),
+        R([C([P('Giáo viên chủ nhiệm:',{bold:true,size:22})],{fill:'EBF3FB',w:3000}), C([P(config.teacher,{size:22})],{w:6355})]),
+        R([C([P('Tổng buổi nghỉ:',{bold:true,size:22})],{fill:'FDECEA',w:3000}),
+           C([P(total + ' buổi (' + mocLabel[moc] + ')',{bold:true,size:22,color:'C00000'})],{w:6355})]),
+      ]}),
+
+      P('II. KẾT QUẢ RÈN LUYỆN', {bold:true,size:26,before:180,after:80,underline:true}),
+      P('1. Điểm rèn luyện theo tuần:', {bold:true,size:24,after:60}),
+
+      ...(allWeeks.length > 0 ? [new Table({
+        width:{size:9355,type:WidthType.DXA},
+        columnWidths:[1200,...allWeeks.map(()=>colW)],
+        rows:[
+          R([C([P('Tuần',{bold:true,size:20,align:AlignmentType.CENTER,color:'FFFFFF'})],{fill:'1F3864',w:1200}),
+             ...allWeeks.map(w=>C([P('T'+w,{bold:true,size:18,align:AlignmentType.CENTER,color:'FFFFFF'})],{fill:'1F3864',w:colW}))]),
+          R([C([P('Điểm',{bold:true,size:20,align:AlignmentType.CENTER})],{fill:'EBF3FB',w:1200}),
+             ...weekScores.map(ws=>{ const col=ws.score>=17?'00703C':ws.score>=14?'1F497D':ws.score>=11?'B8860B':'C00000';
+               return C([P(String(ws.score),{bold:true,size:22,align:AlignmentType.CENTER,color:col})],{w:colW}); })]),
+          R([C([P('Loại',{bold:true,size:20,align:AlignmentType.CENTER})],{fill:'EBF3FB',w:1200}),
+             ...weekRanks.map(rk=>{ const f=rk==='Tốt'?'D5F5E3':rk==='Khá'?'D6EAF8':rk==='Đạt'?'FEF9E7':'FDECEA';
+               return C([P(rk,{bold:true,size:18,align:AlignmentType.CENTER})],{fill:f,w:colW}); })]),
+        ]
+      })] : [P('(Chưa có dữ liệu tuần)',{italic:true,color:'666666'})]),
+
+      P(''),
+      PM([{text:'   Điểm TB: ',bold:false},{text:avgScore+'đ',bold:true},
+          {text:'   –   Số lần Đạt/Chưa đạt: ',bold:false},{text:String(timesLow)+' lần',bold:true,color:'C00000'}],
+         {after:120}),
+
+      P('2. Điểm mạnh – Điểm cần cải thiện:', {bold:true,size:24,after:60}),
+      new Table({ width:{size:9355,type:WidthType.DXA}, columnWidths:[4677,4678], rows:[
+        R([C([P('✅ ĐIỂM MẠNH',{bold:true,size:22,align:AlignmentType.CENTER,color:'00703C'})],{fill:'D5F5E3',w:4677}),
+           C([P('⚠️ CẦN CẢI THIỆN',{bold:true,size:22,align:AlignmentType.CENTER,color:'C00000'})],{fill:'FDECEA',w:4678})]),
+        R([C(strengths.map(t=>new Paragraph({numbering:{reference:'bullets',level:0},spacing:{after:40},
+              children:[new TextRun({text:t,font:'Times New Roman',size:22})]})),{w:4677}),
+           C(weaknesses.map(t=>new Paragraph({numbering:{reference:'bullets',level:0},spacing:{after:40},
+              children:[new TextRun({text:t,font:'Times New Roman',size:22,color:'7B241C'})]})),{w:4678})]),
+      ]}),
+
+      P('3. Vi phạm nổi bật:', {bold:true,size:24,before:140,after:60}),
+      ...(topV.length>0 ? topV.map(t=>new Paragraph({numbering:{reference:'bullets',level:0},spacing:{after:40},
+        children:[new TextRun({text:t,font:'Times New Roman',size:22})]}))
+        : [P('Không có vi phạm nổi bật.',{italic:true,color:'666666'})]),
+
+      P('III. NỘI DUNG HỌP', {bold:true,size:26,before:180,after:80,underline:true}),
+      P('1. Nhà trường thông báo:', {bold:true,size:24,after:60}),
+      new Paragraph({numbering:{reference:'bullets',level:0},spacing:{after:40},children:[new TextRun({text:'Em '+s.name+' đã nghỉ '+total+' buổi, đạt mốc cảnh báo '+mocLabel[moc]+'.',font:'Times New Roman',size:22})]}),
+      new Paragraph({numbering:{reference:'bullets',level:0},spacing:{after:80},children:[new TextRun({text:yeuCau[moc]+'.',font:'Times New Roman',size:22})]}),
+
+      P('2. Ý kiến phụ huynh:', {bold:true,size:24,after:40}),
+      P('....................................................................................................................',{size:22,after:0}),
+      P('....................................................................................................................',{size:22,after:0}),
+      P('....................................................................................................................',{size:22,after:80}),
+
+      P('3. Thống nhất biện pháp:', {bold:true,size:24,after:40}),
+      P('....................................................................................................................',{size:22,after:0}),
+      P('....................................................................................................................',{size:22,after:0}),
+      P('....................................................................................................................',{size:22,after:120}),
+
+      P('IV. KÝ XÁC NHẬN', {bold:true,size:26,before:80,after:120,underline:true}),
+      new Table({ width:{size:9355,type:WidthType.DXA}, columnWidths:[3118,3118,3119], rows:[
+        R([C([P('PHỤ HUYNH HỌC SINH',{bold:true,size:22,align:AlignmentType.CENTER})],{fill:'EBF3FB',w:3118}),
+           C([P('HỌC SINH',{bold:true,size:22,align:AlignmentType.CENTER})],{fill:'EBF3FB',w:3118}),
+           C([P('GIÁO VIÊN CHỦ NHIỆM',{bold:true,size:22,align:AlignmentType.CENTER})],{fill:'EBF3FB',w:3119})]),
+        R([
+          C([P('(Ký và ghi rõ họ tên)',{size:20,align:AlignmentType.CENTER,italic:true,after:0}),
+             P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),
+             P('................................',{size:22,align:AlignmentType.CENTER})],{w:3118}),
+          C([P('(Ký và ghi rõ họ tên)',{size:20,align:AlignmentType.CENTER,italic:true,after:0}),
+             P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),
+             P(s.name,{size:22,align:AlignmentType.CENTER})],{w:3118}),
+          C([P('(Ký và ghi rõ họ tên)',{size:20,align:AlignmentType.CENTER,italic:true,after:0}),
+             P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),P('',{after:0}),
+             P(config.teacher,{size:22,align:AlignmentType.CENTER})],{w:3119}),
+        ]),
+      ]}),
+
+      P(''),
+      P('* Biên bản lập thành 02 bản, mỗi bên giữ 01 bản.',{size:20,italic:true,color:'666666',after:0}),
+    ]}]
+  });
+
+  try {
+    const blob = await Packer.toBlob(doc);
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `Bien-Ban-Hop-PH_${s.name.replace(/\s+/g,'-')}_Moc${moc}buoi.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`✓ Đã tải biên bản họp PH – ${s.name}!`);
+  } catch(err) {
+    console.error('Lỗi tạo Word:', err);
+    showToast('Lỗi tạo file Word!', true);
+  }
+}
+
+// Tính điểm tuần cụ thể (không dùng state hiện tại)
+function calcWeekScoreForWeek(id, week) {
+  const wd = weekData[id];
+  if (!wd) return { score:20, rank:'Tốt', plus:0, minus:0 };
+  let totalGood=0, totalMinus=0;
+  (wd.days||[]).filter(d=>d.week===week).forEach(d => {
+    totalGood += d.goodScore||0;
+    (d.violations||[]).forEach(vid => {
+      VIOLATIONS.forEach(cat=>{ const v=cat.items.find(x=>x.id===vid); if(v) totalMinus+=v.minus; });
+    });
+  });
+  const score = Math.max(0, 20+totalGood-totalMinus);
+  return { score, rank:getrank(score), plus:totalGood, minus:totalMinus };
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────────
+function saveStudentData() {
+  if (!selectedId) return;
+  const date = document.getElementById('dateInput').value;
+  const week = document.getElementById('weekInput').value;
+  if (!week) { showToast('Chọn tuần trước!', true); return; }
+
+  const td = todayData[selectedId];
+  const wd = weekData[selectedId];
+
+  // Remove existing entry for this date+week
+  wd.days = wd.days.filter(d => !(d.date===date && d.week===week));
+
+  // Add new entry
+  wd.days.push({ date, week, goodScore: td.goodScore, violations: [...td.violations], absenceSang: td.absenceSang||0, absenceChieu: td.absenceChieu||0 });
+
+  // Recalculate week score
+  const ws = calcWeekScore(selectedId);
+  const prevRank = wd.rank;
+  wd.weekScore = ws.score;
+  wd.rank = ws.rank;
+
+  // Update timesLow
+  if (ws.rank==='Đạt' || ws.rank==='Chưa đạt') {
+    wd.timesLow = (wd.timesLow||0) + (prevRank!=='Đạt'&&prevRank!=='Chưa đạt' ? 1 : 0);
+  }
+  wd.action = getAction(selectedId, ws.rank);
+
+  // Kiểm tra mốc buổi nghỉ
+  const moc = checkAbsenceMilestone(selectedId);
+  const s = config.students.find(x=>x.id===selectedId);
+  if (moc) {
+    const total = getTotalAbsence(selectedId);
+    wd.pendingAbsenceAlert = moc;
+    showToast(`⚠️ ${s.name} đã nghỉ ${total} buổi – Mốc ${moc}! Đang tạo biên bản...`, true);
+    // Tạo file Word tự động sau 1 giây
+    setTimeout(() => taoWordBienBan(selectedId, moc), 1200);
+  }
+
+  saveAll();
+  renderStudentGrid();
+  renderWeekSummary();
+  showToast(`✓ Đã lưu dữ liệu ${config.students.find(s=>s.id===selectedId)?.name}`);
+}
+
+function saveAll() {
+  localStorage.setItem('to_truong_v1', JSON.stringify({ config, weekData }));
+}
+
+// ── BUILD VI PHẠM THEO NGÀY ───────────────────────────────────────────────────
+const THU_MAP = { '1':'Chủ Nhật','2':'Thứ Hai','3':'Thứ Ba','4':'Thứ Tư','5':'Thứ Năm','6':'Thứ Sáu','0':'Thứ Bảy' };
+
+function getViolationsByDay(id, week) {
+  const wd = weekData[id];
+  if (!wd) return '';
+  const days = (wd.days||[]).filter(d => d.week === week && (d.violations||[]).length > 0);
+  if (!days.length) return 'Không vi phạm';
+
+  // Sắp xếp theo ngày
+  days.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  return days.map(d => {
+    const dateObj = new Date(d.date);
+    const thu = THU_MAP[String(dateObj.getDay())] || d.date;
+    const ngay = `${dateObj.getDate()}/${dateObj.getMonth()+1}`;
+    const vLabels = (d.violations||[]).map(vid => {
+      for (const cat of VIOLATIONS) {
+        const v = cat.items.find(x => x.id===vid);
+        if (v) return v.label;
+      }
+      return '';
+    }).filter(Boolean);
+    return vLabels.length ? `${thu} (${ngay}): ${vLabels.join(', ')}` : '';
+  }).filter(Boolean).join(' | ');
+}
+
+// Dạng HTML cho email (xuống dòng đẹp)
+function getViolationsByDayHtml(id, week) {
+  const wd = weekData[id];
+  if (!wd) return '';
+  const days = (wd.days||[]).filter(d => d.week === week && (d.violations||[]).length > 0);
+  if (!days.length) return '';
+  days.sort((a,b) => new Date(a.date) - new Date(b.date));
+  return days.map(d => {
+    const dateObj = new Date(d.date);
+    const thu = THU_MAP[String(dateObj.getDay())] || d.date;
+    const ngay = `${dateObj.getDate()}/${dateObj.getMonth()+1}`;
+    const vLabels = (d.violations||[]).map(vid => {
+      for (const cat of VIOLATIONS) {
+        const v = cat.items.find(x => x.id===vid);
+        if (v) return v.label;
+      }
+      return '';
+    }).filter(Boolean);
+    return vLabels.length ? `<li><b>${thu} (${ngay}):</b> ${vLabels.join(', ')}</li>` : '';
+  }).filter(Boolean).join('');
+}
+
+// ── WEEK SUMMARY ──────────────────────────────────────────────────────────────
+function renderWeekSummary() {
+  const week = document.getElementById('weekInput').value;
+  document.getElementById('weekLabel').textContent = week ? `Tuần ${week}` : '';
+  const rows = document.getElementById('weekRows');
+
+  const toFilter = document.getElementById('toInput').value;
+  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
+
+  rows.innerHTML = students.map(s => {
+    const ws = calcWeekScore(s.id);
+    const color = getRankColor(ws.rank);
+    const rc = getRankClass(ws.rank);
+    const action = getAction(s.id, ws.rank);
+    return `<div class="summary-row">
+      <div>
+        <div class="summary-name">${s.name}</div>
+        <div class="summary-detail">+${ws.plus} cộng · -${ws.minus} trừ${action?' · ⚠️ '+action:''}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="summary-score" style="color:${color}">${ws.score}</div>
+        <div class="summary-rank ${rc}">${ws.rank}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────────
+function exportWeekCSV() {
+  const week = document.getElementById('weekInput').value;
+  if (!week) { showToast('Chọn tuần!', true); return; }
+
+  const toFilter = document.getElementById('toInput').value;
+  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
+
+  const rows = [['Ho ten','Email PH','To','Diem tuan','Xep loai','Hanh dong','Vi pham theo ngay','Diem cong']];
+  students.forEach(s => {
+    const ws = calcWeekScore(s.id);
+    const action = getAction(s.id, ws.rank);
+    const vByDay = getViolationsByDay(s.id, week);
+    rows.push([s.name, s.email, `Tổ ${s.to}`, ws.score, ws.rank, action||'Không', vByDay, ws.plus]);
+  });
+
+  const bom = '\uFEFF';
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`ren-luyen-tuan${week}.csv`; a.click();
+  showToast('✓ Đã xuất CSV tuần '+week);
+}
+
+// ── SEND TO SHEETS V2 ────────────────────────────────────────────────────────
+function saveScriptUrl() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  localStorage.setItem('scriptUrl', url);
+  const st = document.getElementById('urlStatus');
+  if (url.includes('script.google.com')) {
+    st.textContent = '✓ URL hợp lệ – đã lưu';
+    st.style.color = 'var(--green)';
+  } else if (url) {
+    st.textContent = '⚠️ URL có vẻ không đúng định dạng Apps Script';
+    st.style.color = 'var(--yellow)';
+  } else {
+    st.textContent = '';
+  }
+  updateSendPreview();
+}
+
+function updateSendPreview() {
+  const week = document.getElementById('weekInput').value;
+  const toFilter = document.getElementById('toInput').value;
+  const prev = document.getElementById('sendPreview');
+  if (!week) { prev.innerHTML = '<div style="font-size:12px;color:var(--text2);">⚠️ Chọn tuần ở thanh trên trước.</div>'; return; }
+  const students = config.students || [];
+  const filtered = toFilter ? students.filter(s=>s.to===toFilter) : students;
+  const counts = {tot:0,kha:0,dat:0,chua:0};
+  filtered.forEach(s => {
+    const ws = calcWeekScore(s.id);
+    if (ws.rank==='Tốt') counts.tot++;
+    else if (ws.rank==='Khá') counts.kha++;
+    else if (ws.rank==='Đạt') counts.dat++;
+    else counts.chua++;
+  });
+  prev.innerHTML = `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Sẽ gửi <b style="color:var(--text);">${filtered.length} học sinh</b> – Tuần <b style="color:var(--accent);">${week}</b>${toFilter?' – Tổ '+toFilter:' (toàn lớp)'}:</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span style="background:rgba(52,211,153,.15);color:var(--green);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Tốt: ${counts.tot}</span>
+      <span style="background:rgba(96,165,250,.15);color:var(--kha);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Khá: ${counts.kha}</span>
+      <span style="background:rgba(251,191,36,.15);color:var(--dat);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Đạt: ${counts.dat}</span>
+      <span style="background:rgba(248,113,113,.15);color:var(--chuadat);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Chưa đạt: ${counts.chua}</span>
+    </div>`;
+}
+
+function setSendStatus(type, msg) {
+  const el = document.getElementById('sendStatus');
+  el.className = 'send-status ' + type;
+  el.textContent = msg;
+}
+
+function appendLog(msg) {
+  const el = document.getElementById('sendLog');
+  el.style.display = 'block';
+  el.innerHTML += msg + '<br>';
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendToSheetsV2() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  if (!url) { setSendStatus('error','⚠️ Chưa nhập URL Apps Script!'); return; }
+  if (!url.includes('script.google.com')) { setSendStatus('error','⚠️ URL không đúng định dạng Apps Script!'); return; }
+  const week = document.getElementById('weekInput').value;
+  if (!week) { setSendStatus('error','⚠️ Chưa chọn tuần!'); return; }
+
+  const toFilter = document.getElementById('toInput').value;
+  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
+  if (!students.length) { setSendStatus('error','⚠️ Không có học sinh nào!'); return; }
+
+  const payload = students.map(s => {
+    const ws = calcWeekScore(s.id);
+    const action = getAction(s.id, ws.rank);
+    const vByDay = getViolationsByDay(s.id, week);
+    const vByDayHtml = getViolationsByDayHtml(s.id, week);
+    const totalAbsence = getTotalAbsence(s.id);
+    return {
+      name: s.name, email: s.email, to: `Tổ ${s.to}`,
+      score: ws.score, rank: ws.rank, action: action||'Không',
+      violations: vByDay, violationsHtml: vByDayHtml,
+      plus: ws.plus, minus: ws.minus, week,
+      teacher: config.teacher, className: config.className,
+      totalAbsence, submittedBy: `Tổ trưởng Tổ ${toFilter||'?'}`,
+      submittedAt: new Date().toLocaleString('vi-VN')
+    };
+  });
+
+  const jsonData = JSON.stringify({ type:'weekData', week, className: config.className, data: payload });
+
+  setSendStatus('pending', '⏳ Đang kết nối Google Sheets...');
+  document.getElementById('sendLog').style.display = 'none';
+  document.getElementById('sendLog').innerHTML = '';
+  document.getElementById('btnSend').disabled = true;
+  appendLog(`[${new Date().toLocaleTimeString()}] Bắt đầu gửi ${students.length} học sinh – Tuần ${week}`);
+
+  // Thử POST trước
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: jsonData
+  })
+  .then(() => {
+    appendLog(`[${new Date().toLocaleTimeString()}] ✓ Gửi POST thành công`);
+    setSendStatus('success', `✅ Đã gửi ${students.length} học sinh lên Google Sheets!`);
+    showToast(`✓ Gửi xong ${students.length} HS – Tuần ${week}`);
+    document.getElementById('btnSend').disabled = false;
+  })
+  .catch(err => {
+    appendLog(`[${new Date().toLocaleTimeString()}] POST thất bại: ${err.message} – thử GET fallback...`);
+    // Fallback GET qua iframe
+    sendViaGet(url, jsonData);
+  });
+}
+
+function sendViaGet(url, jsonData) {
+  try {
+    const encoded = encodeURIComponent(jsonData);
+    const getUrl = url + '?data=' + encoded;
+    appendLog(`[${new Date().toLocaleTimeString()}] Đang gửi GET fallback...`);
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = getUrl;
+    iframe.onload = () => {
+      setSendStatus('success','✅ Đã gửi lên Google Sheets (GET fallback)!');
+      showToast('✓ Đã gửi lên Google Sheets!');
+      document.getElementById('btnSend').disabled = false;
+      appendLog(`[${new Date().toLocaleTimeString()}] ✓ GET fallback hoàn tất`);
+      setTimeout(()=>document.body.removeChild(iframe), 3000);
+    };
+    iframe.onerror = () => {
+      setSendStatus('error','❌ Gửi thất bại. Kiểm tra lại URL và quyền Deploy.');
+      document.getElementById('btnSend').disabled = false;
+      appendLog(`[${new Date().toLocaleTimeString()}] ✗ GET fallback cũng thất bại`);
+      document.body.removeChild(iframe);
+    };
+    document.body.appendChild(iframe);
+  } catch(e) {
+    setSendStatus('error','❌ Lỗi: ' + e.message);
+    document.getElementById('btnSend').disabled = false;
+  }
+}
+
+// Giữ lại hàm cũ để không crash nếu còn tham chiếu
+function sendToSheets() { sendToSheetsV2(); }
+function sendViaForm(url, jsonData) { sendViaGet(url, jsonData); }
+function buildScriptCode() {
+  const code = `// ============================================================
+// APPS SCRIPT – Tổng hợp vi phạm từ 4 Tổ Trưởng → Google Sheets
+// Tác giả: Hệ thống Nhật Ký Vi Phạm
+// ============================================================
+// HƯỚNG DẪN CÀI ĐẶT:
+//  1. Mở Google Sheets → Tiện ích mở rộng → Apps Script
+//  2. Xóa hết code cũ, dán toàn bộ file này vào → Lưu (Ctrl+S)
+//  3. Chạy hàm setupSheets() 1 lần để tạo cấu trúc sheet
+//  4. Deploy → New deployment → Web App
+//     - Execute as: Me
+//     - Who has access: Anyone
+//  5. Deploy → Copy URL → Dán vào ô URL trong công cụ Tổ Trưởng
+// ============================================================
+
+// ── CẤU HÌNH ──────────────────────────────────────────────────────────────────
+const SHEET_TONG_HOP  = '📊 Tổng hợp';        // Sheet tổng hợp tất cả tuần
+const SHEET_LOG       = '📋 Lịch sử gửi';      // Log mỗi lần tổ trưởng gửi
+const SHEET_PREFIX    = 'Tuần ';               // Sheet riêng cho mỗi tuần: "Tuần 1", "Tuần 2"...
+
+// Màu xếp loại
+const COLORS = {
+  'Tốt':      { bg: '#d1fae5', fg: '#065f46' },
+  'Khá':      { bg: '#dbeafe', fg: '#1e40af' },
+  'Đạt':      { bg: '#fef3c7', fg: '#92400e' },
+  'Chưa đạt': { bg: '#fee2e2', fg: '#991b1b' },
+};
+const HEADER_BG = '#1e3a5f';
+const HEADER_FG = '#ffffff';
+
+// ── ENTRY POINTS ──────────────────────────────────────────────────────────────
+function doGet(e) {
+  try {
+    if (e && e.parameter && e.parameter.data) {
+      const payload = JSON.parse(decodeURIComponent(e.parameter.data));
+      processPayload(payload);
+    }
+  } catch(err) {
+    Logger.log('doGet error: ' + err.message);
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    processPayload(payload);
+  } catch(err) {
+    Logger.log('doPost error: ' + err.message);
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ── XỬ LÝ DỮ LIỆU CHÍNH ──────────────────────────────────────────────────────
+function processPayload(payload) {
+  if (!payload || payload.type !== 'weekData') return;
+  const data    = payload.data || [];
+  const week    = String(payload.week || (data[0] && data[0].week) || '?');
+  const className = payload.className || (data[0] && data[0].className) || '';
+
+  if (!data.length) return;
+
+  ensureBaseSheets();
+  writeWeekSheet(data, week, className);
+  updateTongHop(data, week, className);
+  writeLog(data, week, className);
+}
+
+// ── TẠO/ĐẢM BẢO CÁC SHEET CƠ BẢN ─────────────────────────────────────────────
+function ensureBaseSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Sheet Tổng hợp
+  if (!ss.getSheetByName(SHEET_TONG_HOP)) {
+    const sh = ss.insertSheet(SHEET_TONG_HOP, 0);
+    const headers = ['Tuần','Lớp','Tổng HS','Tốt','Khá','Đạt','Chưa đạt','Điểm TB','HS vi phạm nhiều nhất','Cập nhật lần cuối'];
+    sh.appendRow(headers);
+    styleHeader(sh, 1, headers.length);
+    sh.setColumnWidths(1, headers.length, [60,80,80,60,60,60,80,80,160,160]);
+  }
+
+  // Sheet Log
+  if (!ss.getSheetByName(SHEET_LOG)) {
+    const sh = ss.insertSheet(SHEET_LOG, 1);
+    const headers = ['Thời gian','Tổ gửi','Tuần','Số HS','Người gửi','Lớp'];
+    sh.appendRow(headers);
+    styleHeader(sh, 1, headers.length);
+    sh.setColumnWidths(1, headers.length, [160,80,60,60,140,80]);
+  }
+}
+
+// ── GHI SHEET TUẦN ─────────────────────────────────────────────────────────────
+function writeWeekSheet(data, week, className) {
+  const ss        = SpreadsheetApp.getActiveSpreadsheet();
+  const sheetName = SHEET_PREFIX + week;
+
+  let sh = ss.getSheetByName(sheetName);
+  if (!sh) {
+    sh = ss.insertSheet(sheetName);
+  }
+
+  // Xác định dòng hiện tại của từng tổ (xóa dữ liệu tổ đó, giữ tổ khác)
+  const toValue = data[0] ? data[0].to : null; // "Tổ 1" / "Tổ 2" / ...
+
+  // Nếu sheet chưa có header → tạo header
+  const hasHeader = sh.getLastRow() > 0 && sh.getRange(1,1).getValue() === 'STT';
+  if (!hasHeader) {
+    const headers = ['STT','Họ và tên','Tổ','Điểm','Xếp loại','+ Cộng','− Trừ','Vi phạm theo ngày','Tổng buổi nghỉ','Hành động','Email PH','Cập nhật'];
+    sh.appendRow(headers);
+    styleHeader(sh, 1, headers.length);
+    sh.setFrozenRows(1);
+    sh.setColumnWidths(1, headers.length, [40,160,50,60,80,60,60,300,100,140,180,140]);
+  }
+
+  // Xóa các dòng thuộc tổ này (giữ dòng header và dòng tổ khác)
+  if (toValue && sh.getLastRow() > 1) {
+    const allData = sh.getRange(2, 1, sh.getLastRow()-1, 3).getValues();
+    // Xóa từ dưới lên để index không lệch
+    for (let i = allData.length - 1; i >= 0; i--) {
+      if (String(allData[i][2]) === toValue) {
+        sh.deleteRow(i + 2);
+      }
+    }
+  }
+
+  // Thêm dữ liệu mới
+  const now = new Date().toLocaleString('vi-VN');
+  let stt = sh.getLastRow(); // STT liên tục
+
+  data.forEach(row => {
+    stt++;
+    const rowData = [
+      stt,
+      row.name,
+      row.to,
+      row.score,
+      row.rank,
+      row.plus,
+      row.minus,
+      row.violations || 'Không vi phạm',
+      row.totalAbsence || 0,
+      row.action || 'Không',
+      row.email || '',
+      now
+    ];
+    sh.appendRow(rowData);
+
+    // Tô màu theo xếp loại
+    const lastRow = sh.getLastRow();
+    const c = COLORS[row.rank] || COLORS['Chưa đạt'];
+    sh.getRange(lastRow, 1, 1, 12).setBackground(c.bg);
+    sh.getRange(lastRow, 5).setFontColor(c.fg).setFontWeight('bold'); // cột Xếp loại
+    if (row.score < 17) sh.getRange(lastRow, 4).setFontColor('#dc2626'); // Điểm đỏ nếu < 17
+    if (row.violations && row.violations !== 'Không vi phạm') {
+      sh.getRange(lastRow, 8).setFontColor('#dc2626'); // Vi phạm màu đỏ
+    }
+  });
+
+  // Sắp xếp theo Tổ rồi theo Họ tên
+  if (sh.getLastRow() > 2) {
+    sh.getRange(2, 1, sh.getLastRow()-1, 12).sort([{column:3, ascending:true},{column:2, ascending:true}]);
+    // Cập nhật lại STT sau khi sort
+    for (let i = 2; i <= sh.getLastRow(); i++) {
+      sh.getRange(i, 1).setValue(i - 1);
+    }
+  }
+}
+
+// ── CẬP NHẬT SHEET TỔNG HỢP ──────────────────────────────────────────────────
+function updateTongHop(data, week, className) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SHEET_TONG_HOP);
+  if (!sh) return;
+
+  // Tính thống kê toàn bộ tuần (đọc từ sheet tuần vừa ghi)
+  const weekSheet   = ss.getSheetByName(SHEET_PREFIX + week);
+  let allStudents   = [];
+  if (weekSheet && weekSheet.getLastRow() > 1) {
+    const vals = weekSheet.getRange(2, 1, weekSheet.getLastRow()-1, 12).getValues();
+    allStudents = vals.map(r => ({
+      name: r[1], to: r[2], score: r[3], rank: r[4],
+      violations: r[7], totalAbsence: r[8]
+    }));
+  }
+
+  if (!allStudents.length) return;
+
+  const total   = allStudents.length;
+  const counts  = { 'Tốt':0,'Khá':0,'Đạt':0,'Chưa đạt':0 };
+  let scoreSum  = 0;
+  let worstName = '', worstViolations = '';
+  allStudents.forEach(s => {
+    counts[s.rank] = (counts[s.rank]||0) + 1;
+    scoreSum += Number(s.score) || 0;
+    if (s.violations && s.violations !== 'Không vi phạm' && s.violations.length > worstViolations.length) {
+      worstName = s.name;
+      worstViolations = s.violations;
+    }
+  });
+  const avg = (scoreSum / total).toFixed(2);
+  const now = new Date().toLocaleString('vi-VN');
+
+  // Tìm dòng tuần này nếu đã có
+  const allRows = sh.getDataRange().getValues();
+  let targetRow = -1;
+  for (let i = 1; i < allRows.length; i++) {
+    if (String(allRows[i][0]) === String(week)) { targetRow = i + 1; break; }
+  }
+
+  const rowData = [week, className, total, counts['Tốt'], counts['Khá'], counts['Đạt'], counts['Chưa đạt'], avg, worstName ? \`\${worstName}: \${worstViolations.substring(0,80)}\` : 'Không', now];
+
+  if (targetRow > 0) {
+    sh.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sh.appendRow(rowData);
+    targetRow = sh.getLastRow();
+  }
+
+  // Tô màu dòng tổng hợp
+  const avgNum = parseFloat(avg);
+  const rowColor = avgNum >= 17 ? COLORS['Tốt'].bg : avgNum >= 14 ? COLORS['Khá'].bg : avgNum >= 11 ? COLORS['Đạt'].bg : COLORS['Chưa đạt'].bg;
+  sh.getRange(targetRow, 1, 1, rowData.length).setBackground(rowColor);
+}
+
+// ── GHI LOG ───────────────────────────────────────────────────────────────────
+function writeLog(data, week, className) {
+  const ss  = SpreadsheetApp.getActiveSpreadsheet();
+  const sh  = ss.getSheetByName(SHEET_LOG);
+  if (!sh) return;
+  const toValue   = data[0] ? data[0].to : '?';
+  const submitter = data[0] ? (data[0].submittedBy || toValue) : toValue;
+  sh.appendRow([new Date().toLocaleString('vi-VN'), toValue, week, data.length, submitter, className]);
+}
+
+// ── STYLE HELPERS ─────────────────────────────────────────────────────────────
+function styleHeader(sh, row, numCols) {
+  const range = sh.getRange(row, 1, 1, numCols);
+  range.setBackground(HEADER_BG)
+       .setFontColor(HEADER_FG)
+       .setFontWeight('bold')
+       .setFontSize(11)
+       .setHorizontalAlignment('center')
+       .setWrap(true);
+}
+
+// ── SETUP (chạy 1 lần khi cài đặt) ───────────────────────────────────────────
+function setupSheets() {
+  ensureBaseSheets();
+  SpreadsheetApp.getUi().alert(
+    '✅ Thiết lập hoàn tất!\\n\\n' +
+    'Đã tạo:\\n' +
+    '• Sheet "📊 Tổng hợp" – tóm tắt từng tuần\\n' +
+    '• Sheet "📋 Lịch sử gửi" – log mỗi lần tổ trưởng gửi\\n\\n' +
+    'Tiếp theo:\\n' +
+    '1. Bấm Deploy → New deployment → Web App\\n' +
+    '2. Execute as: Me | Who has access: Anyone\\n' +
+    '3. Deploy → Copy URL → Dán vào công cụ Tổ Trưởng'
+  );
+}
+`;
+  document.getElementById('scriptCodeArea').value = code;
+}
+
+function showScript() {
+  buildScriptCode();
+  document.getElementById('scriptModal').style.display = 'flex';
+  document.getElementById('scriptModal').style.alignItems = 'flex-start';
+  document.getElementById('scriptModal').style.paddingTop = '20px';
+}
+function copyScript() {
+  document.getElementById('scriptCodeArea').select();
+  navigator.clipboard.writeText(document.getElementById('scriptCodeArea').value).then(()=>showToast('✓ Đã copy code!'));
+}
+
+// ── NAV TABS ──────────────────────────────────────────────────────────────────
+function switchMainTab(tab) {
+  ['Nhap','Tuan','Gui'].forEach(t => {
+    const lower = t.toLowerCase();
+    const panelId = 'panel'+t;
+    const tabId = 'tab'+t;
+    document.getElementById(panelId).style.display = (lower===tab)?'block':'none';
+    document.getElementById(tabId).classList.toggle('active', lower===tab);
+  });
+  if (tab==='tuan') renderWeekSummary();
+  if (tab==='gui') {
+    const u=localStorage.getItem('scriptUrl');
+    if(u) { document.getElementById('scriptUrl').value=u; saveScriptUrl(); }
+    updateSendPreview();
+  }
+  if (tab!=='nhap') document.getElementById('saveBar').classList.remove('show');
+  else if (selectedId) document.getElementById('saveBar').classList.add('show');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast'+(isErr?' err':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+init();
+</script>
+</body>
+</html>
