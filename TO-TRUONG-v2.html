@@ -169,27 +169,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .send-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; color: var(--text); font-family: inherit; font-size: 13px; outline: none; transition: border-color .2s; margin-bottom: 8px; }
 .send-input:focus { border-color: var(--accent); }
 .warn-box { background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.3); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #d4b84a; line-height: 1.7; margin-bottom: 10px; }
-/* CHOT TUAN */
-.chot-bar { background: linear-gradient(135deg,rgba(52,211,153,.12),rgba(108,142,245,.12)); border:1px solid rgba(52,211,153,.3); border-radius:12px; padding:12px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
-.chot-info { flex:1; }
-.chot-info b { font-size:13px; font-weight:800; color:var(--green); display:block; }
-.chot-info span { font-size:11px; color:var(--text2); }
-.btn-chot { background:linear-gradient(135deg,#059669,var(--green)); color:#fff; padding:10px 18px; border-radius:10px; border:none; font-family:inherit; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.btn-chot:active { opacity:.85; }
-.preview-tag { display:inline-block; background:rgba(251,191,36,.15); border:1px solid rgba(251,191,36,.35); color:var(--yellow); font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; margin-left:6px; vertical-align:middle; }
-.final-tag { display:inline-block; background:rgba(52,211,153,.15); border:1px solid rgba(52,211,153,.35); color:var(--green); font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; margin-left:6px; vertical-align:middle; }
-/* SEND STATUS */
-.send-status { border-radius: 10px; padding: 10px 14px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display:none; }
-.send-status.pending { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); color: var(--yellow); display:block; }
-.send-status.success { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.4); color: var(--green); display:block; }
-.send-status.error   { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.4); color: var(--red); display:block; }
-.send-log { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 11px; color: var(--text2); line-height: 1.8; max-height: 120px; overflow-y: auto; margin-top: 8px; display:none; font-family: monospace; }
-.step-row { display:flex; align-items:center; gap:8px; padding: 8px 10px; border-radius: 8px; margin-bottom:4px; background: var(--bg2); font-size:12px; }
-.step-icon { font-size:14px; width:20px; text-align:center; }
-.step-text { flex:1; color:var(--text2); }
-.step-row.done .step-text { color: var(--green); }
-.step-row.active .step-text { color: var(--yellow); }
-.step-row.fail .step-text { color: var(--red); }
 </style>
 </head>
 <body>
@@ -269,6 +248,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="nav-tab active" id="tabNhap" onclick="switchMainTab('nhap')">✏️ Nhập hôm nay</div>
     <div class="nav-tab" id="tabTuan" onclick="switchMainTab('tuan')">📊 Tổng tuần</div>
     <div class="nav-tab" id="tabGui" onclick="switchMainTab('gui')">📧 Gửi email</div>
+    <div class="nav-tab" id="tabQl" onclick="switchMainTab('ql')">⚙️ Quản lý</div>
   </div>
 
   <!-- TAB NHAP -->
@@ -344,64 +324,72 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 
   <!-- TAB TUAN -->
   <div id="panelTuan" style="display:none;">
-
-    <!-- THANH CHỐT TUẦN -->
-    <div class="chot-bar" id="chotBar">
-      <div class="chot-info">
-        <b>⚡ Chốt điểm cuối tuần</b>
-        <span>Bấm để tính chính thức – ghi vào Google Sheets</span>
-      </div>
-      <button class="btn-chot" onclick="chotTuan()">✅ Chốt tuần</button>
-    </div>
-    <div id="chotDoneBar" style="display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--green);font-weight:700;">
-      ✅ Đã chốt tuần <span id="chotWeekLabel"></span> – Điểm chính thức đã được ghi nhận
-      <button onclick="huyChot()" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;margin-left:10px;text-decoration:underline;">Huỷ chốt</button>
-    </div>
-
     <div class="week-summary" id="weekSummaryContent">
       <h3>📊 Tổng kết tuần <span id="weekLabel"></span></h3>
       <div id="weekRows"></div>
     </div>
-    <button class="btn btn-green" onclick="exportWeekCSV()" style="margin-top:4px;">⬇️ Xuất CSV tuần này</button>
+    <button class="btn btn-green" onclick="exportWeekCSV()">⬇️ Xuất CSV tuần này</button>
+  </div>
+
+  <!-- TAB QUAN LY -->
+  <div id="panelQl" style="display:none;padding-bottom:20px;">
+    <!-- CHUYỂN TỔ -->
+    <div class="setup-card" style="margin-bottom:14px;">
+      <h2>🔄 Chuyển tổ học sinh</h2>
+      <p>Học sinh đổi chỗ ngồi giữa năm — lịch sử điểm giữ nguyên, chỉ cập nhật tổ mới.</p>
+      <div class="field-label">Chọn học sinh</div>
+      <select class="setup-input" id="moveStudentSel" onchange="onMoveStudentChange()">
+        <option value="">-- Chọn học sinh --</option>
+      </select>
+      <div id="moveStudentInfo" style="display:none;background:rgba(108,142,245,.1);border:1px solid rgba(108,142,245,.3);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;"></div>
+      <div class="field-label" style="margin-top:12px;">Chuyển sang Tổ</div>
+      <select class="setup-input" id="moveToSel">
+        <option value="1">Tổ 1</option>
+        <option value="2">Tổ 2</option>
+        <option value="3">Tổ 3</option>
+        <option value="4">Tổ 4</option>
+      </select>
+      <div style="margin-top:14px;">
+        <button class="btn btn-primary" onclick="doMoveStudent()">🔄 Xác nhận chuyển tổ</button>
+      </div>
+    </div>
+    <!-- BACKUP -->
+    <div class="setup-card" style="margin-bottom:14px;">
+      <h2>💾 Sao lưu & Phục hồi</h2>
+      <p>Xuất file JSON để dự phòng. Khi đổi máy hoặc mất dữ liệu, nhập lại file này để khôi phục hoàn toàn.</p>
+      <button class="btn btn-green" onclick="exportBackup()" style="margin-bottom:8px;">⬇️ Xuất backup (JSON)</button>
+      <div class="field-label">Nhập file backup đã lưu</div>
+      <input type="file" id="restoreFile" accept=".json" onchange="importBackup(event)" style="display:none;">
+      <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()">📂 Chọn file JSON để phục hồi</button>
+    </div>
+    <!-- NĂM MỚI -->
+    <div class="setup-card" style="border-color:rgba(248,113,113,.35);">
+      <h2>🗓️ Bắt đầu năm học mới</h2>
+      <p>Giữ nguyên danh sách học sinh. <b style="color:var(--red);">Xóa sạch điểm, vi phạm, buổi nghỉ</b> để bắt đầu lại từ đầu.</p>
+      <div class="info-box" style="background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3);">
+        ⚠️ <b>Quy trình an toàn:</b><br>
+        1. Xuất backup JSON trước để lưu hồ sơ năm cũ<br>
+        2. Bấm nút bên dưới — danh sách HS vẫn còn nguyên<br>
+        3. Cập nhật tổ mới nếu thầy muốn sắp xếp lại
+      </div>
+      <button class="btn btn-danger" onclick="confirmNewYear()">🗓️ Bắt đầu năm học mới (xóa điểm)</button>
+    </div>
   </div>
 
   <!-- TAB GUI -->
   <div id="panelGui" style="display:none;">
-
-    <!-- BƯỚC 1: URL -->
     <div class="send-card">
-      <h3>⚙️ Bước 1 – Dán URL Apps Script</h3>
-      <div class="info-box" style="margin-bottom:10px;">
-        📌 URL lấy từ Google Sheets → Apps Script → Deploy → Web App.<br>
-        Chỉ cần dán <b>1 lần</b>, hệ thống tự nhớ.
-      </div>
-      <label style="font-size:11px;color:var(--text2);font-weight:700;display:block;margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;">Apps Script URL</label>
-      <input class="send-input" type="url" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveScriptUrl()">
-      <div id="urlStatus" style="font-size:11px;color:var(--text2);margin-top:4px;"></div>
+      <h3>📧 Gửi email cuối tuần</h3>
+      <div class="warn-box">⚠️ Chỉ gửi vào <b>cuối tuần</b> (Thứ Sáu hoặc Thứ Bảy). Email sẽ gửi đến phụ huynh học sinh có vi phạm hoặc cần thông báo điểm rèn luyện.</div>
+      <label style="font-size:12px;color:var(--text2);font-weight:700;display:block;margin-bottom:5px;">Apps Script URL (lấy từ Google Sheets)</label>
+      <input class="send-input" type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveScriptUrl()">
+      <div id="weekPreview" style="margin-top:10px;"></div>
+      <button class="btn btn-green" onclick="sendToSheets()" style="margin-top:10px;">📤 Gửi dữ liệu lên Google Sheets</button>
     </div>
-
-    <!-- BƯỚC 2: Xem trước & Gửi -->
     <div class="send-card">
-      <h3>📤 Bước 2 – Gửi dữ liệu tuần lên Sheets</h3>
-      <div id="sendPreview" style="margin-bottom:10px;"></div>
-      <div class="send-status" id="sendStatus"></div>
-      <div class="send-log" id="sendLog"></div>
-      <div style="display:flex;gap:8px;margin-top:4px;">
-        <button class="btn btn-green" id="btnSend" onclick="sendToSheetsV2()" style="flex:2;">📤 Gửi tổng hợp lên Sheets</button>
-        <button class="btn btn-secondary" onclick="exportWeekCSV()" style="flex:1;">⬇️ CSV</button>
-      </div>
-    </div>
-
-    <!-- HƯỚNG DẪN -->
-    <div class="send-card">
-      <h3>📋 Lấy code Apps Script</h3>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-        <div class="step-row"><span class="step-icon">1️⃣</span><span class="step-text">Mở Google Sheets → <b>Tiện ích mở rộng → Apps Script</b></span></div>
-        <div class="step-row"><span class="step-icon">2️⃣</span><span class="step-text">Xóa code cũ, dán code bên dưới → <b>Lưu</b></span></div>
-        <div class="step-row"><span class="step-icon">3️⃣</span><span class="step-text"><b>Deploy → New deployment → Web App → Anyone → Deploy</b></span></div>
-        <div class="step-row"><span class="step-icon">4️⃣</span><span class="step-text">Copy URL → Dán vào ô trên → Xong!</span></div>
-      </div>
-      <button class="btn btn-secondary" onclick="showScript()">👁️ Xem & Copy code Apps Script</button>
+      <h3>📋 Lấy Apps Script</h3>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">Dán code này vào Google Sheets → Apps Script → Deploy as Web App → lấy URL dán vào ô trên.</p>
+      <button class="btn btn-secondary" onclick="showScript()">👁️ Xem & Copy code</button>
     </div>
   </div>
 </div>
@@ -494,7 +482,7 @@ function init() {
   }
 
   document.getElementById('dateInput').addEventListener('change', loadTodayData);
-  document.getElementById('weekInput').addEventListener('change', () => { loadTodayData(); renderWeekSummary(); updateSendPreview(); });
+  document.getElementById('weekInput').addEventListener('change', () => { loadTodayData(); renderWeekSummary(); });
   document.getElementById('toInput').addEventListener('change', () => { renderStudentGrid(); });
 }
 
@@ -600,25 +588,17 @@ function renderStudentGrid() {
   const filtered = toFilter ? config.students.filter(s => s.to === toFilter) : config.students;
 
   filtered.forEach(s => {
+    const wd  = getWeekScore(s.id);
     const td  = todayData[s.id] || { goodScore:0, violations:new Set() };
-    const ws  = getFinalScore(s.id); // điểm chính thức (đã chốt)
-    const todayVCount = td.violations ? td.violations.size : 0;
-    const todayGood   = td.goodScore || 0;
-    const hasDataToday = todayVCount > 0 || todayGood > 0;
-
-    // Badge: nếu đã chốt → hiện điểm chính thức; nếu chưa → hiện "-"
-    const isFinal = ws !== null;
-    const badgeText  = isFinal ? ws.score+'đ' : '–';
-    const badgeClass = isFinal ? getRankClass(ws.rank) : 'score-kha';
-    const subText    = isFinal ? ws.rank : (todayVCount>0 ? `${todayVCount} lỗi hôm nay` : 'Chưa chốt');
-    const subColor   = isFinal ? `var(--${badgeClass.replace('score-','')==='chua'?'chuadat':badgeClass.replace('score-','')})` : 'var(--text2)';
+    const hasData = td.goodScore > 0 || td.violations.size > 0;
+    const rankClass = getRankClass(wd.rank);
 
     const div = document.createElement('div');
-    div.className = 'student-btn'+(s.id===selectedId?' selected':'')+(hasDataToday?' has-data':'');
+    div.className = 'student-btn'+(s.id===selectedId?' selected':'')+(hasData?' has-data':'');
     div.innerHTML = `
-      <div class="score-badge ${badgeClass}">${badgeText}</div>
+      <div class="score-badge ${rankClass}">${wd.score}đ</div>
       <div class="sname">${s.name}</div>
-      <div class="sscore" style="color:${subColor};font-size:10px;">${subText}</div>
+      <div class="sscore" style="color:var(--${rankClass.replace('score-','')==='chua'?'chuadat':rankClass.replace('score-','')});">${wd.rank}</div>
     `;
     div.onclick = () => selectStudent(s.id);
     grid.appendChild(div);
@@ -785,34 +765,6 @@ function calcWeekScore(id) {
 
 function getWeekScore(id) {
   return calcWeekScore(id);
-}
-
-// Điểm chính thức (đã chốt) – null nếu chưa chốt tuần này
-function getFinalScore(id) {
-  const week = document.getElementById('weekInput').value;
-  const wd = weekData[id];
-  if (!wd || !wd.finalWeeks) return null;
-  const f = wd.finalWeeks[week];
-  if (!f) return null;
-  return { score: f.score, rank: f.rank, plus: f.plus, minus: f.minus };
-}
-
-// Tính điểm theo logic đúng: tổng lỗi cộng dồn cả tuần, điểm tốt theo từng ngày
-function calcWeekScoreFinal(id, week) {
-  const wd = weekData[id];
-  if (!wd) return { score:20, rank:'Tốt', plus:0, minus:0 };
-  let totalGood = 0, totalMinus = 0;
-  (wd.days||[]).filter(d => d.week === week).forEach(d => {
-    totalGood += d.goodScore || 0; // điểm tốt cộng theo từng ngày
-    (d.violations||[]).forEach(vid => { // lỗi cộng dồn cả tuần
-      VIOLATIONS.forEach(cat => {
-        const v = cat.items.find(x => x.id===vid);
-        if (v) totalMinus += v.minus;
-      });
-    });
-  });
-  const score = Math.max(0, 20 + totalGood - totalMinus);
-  return { score, rank: getrank(score), plus: totalGood, minus: totalMinus };
 }
 
 function getAction(id, rank) {
@@ -1174,28 +1126,18 @@ function renderWeekSummary() {
   document.getElementById('weekLabel').textContent = week ? `Tuần ${week}` : '';
   const rows = document.getElementById('weekRows');
 
-  // Kiểm tra đã chốt chưa
-  const isFinalized = checkWeekFinalized(week);
-  document.getElementById('chotBar').style.display     = isFinalized ? 'none' : 'flex';
-  document.getElementById('chotDoneBar').style.display = isFinalized ? 'block' : 'none';
-  if (isFinalized) document.getElementById('chotWeekLabel').textContent = week;
-
   const toFilter = document.getElementById('toInput').value;
   const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
 
   rows.innerHTML = students.map(s => {
-    // Dùng điểm chính thức nếu đã chốt, dùng điểm xem trước nếu chưa
-    const ws     = isFinalized ? (getFinalScore(s.id) || calcWeekScoreFinal(s.id, week)) : calcWeekScoreFinal(s.id, week);
-    const color  = getRankColor(ws.rank);
-    const rc     = getRankClass(ws.rank);
+    const ws = calcWeekScore(s.id);
+    const color = getRankColor(ws.rank);
+    const rc = getRankClass(ws.rank);
     const action = getAction(s.id, ws.rank);
-    const tag    = isFinalized
-      ? `<span class="final-tag">✅ Chính thức</span>`
-      : `<span class="preview-tag">👁 Xem trước</span>`;
     return `<div class="summary-row">
-      <div style="flex:1;">
-        <div class="summary-name">${s.name} ${tag}</div>
-        <div class="summary-detail">+${ws.plus} điểm tốt · −${ws.minus} vi phạm${action?' · ⚠️ '+action:''}</div>
+      <div>
+        <div class="summary-name">${s.name}</div>
+        <div class="summary-detail">+${ws.plus} cộng · -${ws.minus} trừ${action?' · ⚠️ '+action:''}</div>
       </div>
       <div style="text-align:right;">
         <div class="summary-score" style="color:${color}">${ws.score}</div>
@@ -1203,63 +1145,6 @@ function renderWeekSummary() {
       </div>
     </div>`;
   }).join('');
-}
-
-function checkWeekFinalized(week) {
-  if (!week) return false;
-  // Kiểm tra xem tất cả HS trong tổ hiện tại đã có finalWeeks[week] chưa
-  const toFilter = document.getElementById('toInput').value;
-  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
-  if (!students.length) return false;
-  return students.every(s => {
-    const wd = weekData[s.id];
-    return wd && wd.finalWeeks && wd.finalWeeks[week];
-  });
-}
-
-function chotTuan() {
-  const week = document.getElementById('weekInput').value;
-  if (!week) { showToast('Chọn tuần trước!', true); return; }
-  const toFilter = document.getElementById('toInput').value;
-  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
-
-  let countLow = 0;
-  students.forEach(s => {
-    const ws = calcWeekScoreFinal(s.id, week);
-    if (!weekData[s.id]) return;
-    if (!weekData[s.id].finalWeeks) weekData[s.id].finalWeeks = {};
-    weekData[s.id].finalWeeks[week] = { score: ws.score, rank: ws.rank, plus: ws.plus, minus: ws.minus };
-    weekData[s.id].weekScore = ws.score;
-    weekData[s.id].rank = ws.rank;
-    // Cập nhật timesLow
-    const prev = weekData[s.id].rank;
-    if (ws.rank==='Đạt' || ws.rank==='Chưa đạt') {
-      if (prev!=='Đạt' && prev!=='Chưa đạt') weekData[s.id].timesLow = (weekData[s.id].timesLow||0) + 1;
-      countLow++;
-    }
-    weekData[s.id].action = getAction(s.id, ws.rank);
-  });
-
-  saveAll();
-  renderWeekSummary();
-  renderStudentGrid();
-  showToast(`✅ Đã chốt tuần ${week}! ${countLow>0?countLow+' HS cần chú ý':''}`);
-}
-
-function huyChot() {
-  const week = document.getElementById('weekInput').value;
-  if (!week) return;
-  const toFilter = document.getElementById('toInput').value;
-  const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
-  students.forEach(s => {
-    if (weekData[s.id] && weekData[s.id].finalWeeks) {
-      delete weekData[s.id].finalWeeks[week];
-    }
-  });
-  saveAll();
-  renderWeekSummary();
-  renderStudentGrid();
-  showToast('↩️ Đã huỷ chốt tuần '+week);
 }
 
 // ── EXPORT CSV ────────────────────────────────────────────────────────────────
@@ -1286,107 +1171,35 @@ function exportWeekCSV() {
   showToast('✓ Đã xuất CSV tuần '+week);
 }
 
-// ── SEND TO SHEETS V2 ────────────────────────────────────────────────────────
+// ── SEND TO SHEETS ────────────────────────────────────────────────────────────
 function saveScriptUrl() {
+  localStorage.setItem('scriptUrl', document.getElementById('scriptUrl').value);
+}
+
+function sendToSheets() {
   const url = document.getElementById('scriptUrl').value.trim();
-  localStorage.setItem('scriptUrl', url);
-  const st = document.getElementById('urlStatus');
-  if (url.includes('script.google.com')) {
-    st.textContent = '✓ URL hợp lệ – đã lưu';
-    st.style.color = 'var(--green)';
-  } else if (url) {
-    st.textContent = '⚠️ URL có vẻ không đúng định dạng Apps Script';
-    st.style.color = 'var(--yellow)';
-  } else {
-    st.textContent = '';
-  }
-  updateSendPreview();
-}
-
-function updateSendPreview() {
+  if (!url) { showToast('Nhập URL Apps Script!', true); return; }
   const week = document.getElementById('weekInput').value;
-  const toFilter = document.getElementById('toInput').value;
-  const prev = document.getElementById('sendPreview');
-  if (!week) { prev.innerHTML = '<div style="font-size:12px;color:var(--text2);">⚠️ Chọn tuần ở thanh trên trước.</div>'; return; }
-  const students = config.students || [];
-  const filtered = toFilter ? students.filter(s=>s.to===toFilter) : students;
-  const counts = {tot:0,kha:0,dat:0,chua:0};
-  filtered.forEach(s => {
-    const ws = calcWeekScore(s.id);
-    if (ws.rank==='Tốt') counts.tot++;
-    else if (ws.rank==='Khá') counts.kha++;
-    else if (ws.rank==='Đạt') counts.dat++;
-    else counts.chua++;
-  });
-  prev.innerHTML = `
-    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Sẽ gửi <b style="color:var(--text);">${filtered.length} học sinh</b> – Tuần <b style="color:var(--accent);">${week}</b>${toFilter?' – Tổ '+toFilter:' (toàn lớp)'}:</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <span style="background:rgba(52,211,153,.15);color:var(--green);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Tốt: ${counts.tot}</span>
-      <span style="background:rgba(96,165,250,.15);color:var(--kha);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Khá: ${counts.kha}</span>
-      <span style="background:rgba(251,191,36,.15);color:var(--dat);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Đạt: ${counts.dat}</span>
-      <span style="background:rgba(248,113,113,.15);color:var(--chuadat);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Chưa đạt: ${counts.chua}</span>
-    </div>`;
-}
-
-function setSendStatus(type, msg) {
-  const el = document.getElementById('sendStatus');
-  el.className = 'send-status ' + type;
-  el.textContent = msg;
-}
-
-function appendLog(msg) {
-  const el = document.getElementById('sendLog');
-  el.style.display = 'block';
-  el.innerHTML += msg + '<br>';
-  el.scrollTop = el.scrollHeight;
-}
-
-function sendToSheetsV2() {
-  const url = document.getElementById('scriptUrl').value.trim();
-  if (!url) { setSendStatus('error','⚠️ Chưa nhập URL Apps Script!'); return; }
-  if (!url.includes('script.google.com')) { setSendStatus('error','⚠️ URL không đúng định dạng Apps Script!'); return; }
-  const week = document.getElementById('weekInput').value;
-  if (!week) { setSendStatus('error','⚠️ Chưa chọn tuần!'); return; }
+  if (!week) { showToast('Chọn tuần!', true); return; }
 
   const toFilter = document.getElementById('toInput').value;
   const students = toFilter ? config.students.filter(s=>s.to===toFilter) : config.students;
-  if (!students.length) { setSendStatus('error','⚠️ Không có học sinh nào!'); return; }
-
-  // Kiểm tra đã chốt chưa
-  const isFinalized = checkWeekFinalized(week);
-  if (!isFinalized) {
-    setSendStatus('error','⚠️ Chưa chốt tuần! Vào tab "Tổng tuần" → bấm "Chốt tuần" trước.');
-    document.getElementById('btnSend').disabled = false;
-    return;
-  }
 
   const payload = students.map(s => {
-    const ws = getFinalScore(s.id) || calcWeekScoreFinal(s.id, week);
+    const ws = calcWeekScore(s.id);
     const action = getAction(s.id, ws.rank);
     const vByDay = getViolationsByDay(s.id, week);
     const vByDayHtml = getViolationsByDayHtml(s.id, week);
     const totalAbsence = getTotalAbsence(s.id);
-    return {
-      name: s.name, email: s.email, to: `Tổ ${s.to}`,
-      score: ws.score, rank: ws.rank, action: action||'Không',
-      violations: vByDay, violationsHtml: vByDayHtml,
-      plus: ws.plus, minus: ws.minus, week,
-      teacher: config.teacher, className: config.className,
-      totalAbsence, submittedBy: `Tổ trưởng Tổ ${toFilter||'?'}`,
-      submittedAt: new Date().toLocaleString('vi-VN'),
-      isFinalized: true
-    };
+    const pendingAlert = weekData[s.id]?.pendingAbsenceAlert || null;
+    return { name:s.name, email:s.email, to:`Tổ ${s.to}`, score:ws.score, rank:ws.rank, action:action||'', violations:vByDay, violationsHtml:vByDayHtml, plus:ws.plus, minus:ws.minus, week, teacher:config.teacher, className:config.className, totalAbsence, pendingAbsenceAlert: pendingAlert };
   });
 
-  const jsonData = JSON.stringify({ type:'weekData', week, className: config.className, data: payload });
+  // Dùng no-cors mode để bypass CORS khi chạy từ file local
+  showToast('Đang gửi...');
+  const jsonData = JSON.stringify({ type:'weekData', data:payload });
 
-  setSendStatus('pending', '⏳ Đang kết nối Google Sheets...');
-  document.getElementById('sendLog').style.display = 'none';
-  document.getElementById('sendLog').innerHTML = '';
-  document.getElementById('btnSend').disabled = true;
-  appendLog(`[${new Date().toLocaleTimeString()}] Bắt đầu gửi ${students.length} học sinh – Tuần ${week}`);
-
-  // Thử POST trước
+  // Thử fetch với no-cors trước
   fetch(url, {
     method: 'POST',
     mode: 'no-cors',
@@ -1394,313 +1207,243 @@ function sendToSheetsV2() {
     body: jsonData
   })
   .then(() => {
-    appendLog(`[${new Date().toLocaleTimeString()}] ✓ Gửi POST thành công`);
-    setSendStatus('success', `✅ Đã gửi ${students.length} học sinh lên Google Sheets!`);
-    showToast(`✓ Gửi xong ${students.length} HS – Tuần ${week}`);
-    document.getElementById('btnSend').disabled = false;
+    showToast('✓ Đã gửi lên Google Sheets!');
   })
-  .catch(err => {
-    appendLog(`[${new Date().toLocaleTimeString()}] POST thất bại: ${err.message} – thử GET fallback...`);
-    // Fallback GET qua iframe
-    sendViaGet(url, jsonData);
+  .catch(() => {
+    // Fallback: dùng form submit mở tab mới
+    sendViaForm(url, jsonData);
   });
 }
 
-function sendViaGet(url, jsonData) {
-  try {
-    const encoded = encodeURIComponent(jsonData);
-    const getUrl = url + '?data=' + encoded;
-    appendLog(`[${new Date().toLocaleTimeString()}] Đang gửi GET fallback...`);
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = getUrl;
-    iframe.onload = () => {
-      setSendStatus('success','✅ Đã gửi lên Google Sheets (GET fallback)!');
-      showToast('✓ Đã gửi lên Google Sheets!');
-      document.getElementById('btnSend').disabled = false;
-      appendLog(`[${new Date().toLocaleTimeString()}] ✓ GET fallback hoàn tất`);
-      setTimeout(()=>document.body.removeChild(iframe), 3000);
-    };
-    iframe.onerror = () => {
-      setSendStatus('error','❌ Gửi thất bại. Kiểm tra lại URL và quyền Deploy.');
-      document.getElementById('btnSend').disabled = false;
-      appendLog(`[${new Date().toLocaleTimeString()}] ✗ GET fallback cũng thất bại`);
-      document.body.removeChild(iframe);
-    };
-    document.body.appendChild(iframe);
-  } catch(e) {
-    setSendStatus('error','❌ Lỗi: ' + e.message);
-    document.getElementById('btnSend').disabled = false;
-  }
+function sendViaForm(url, jsonData) {
+  // Encode data vào URL param, mở tab ẩn
+  const encoded = encodeURIComponent(jsonData);
+  const getUrl = url + '?data=' + encoded;
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = getUrl;
+  document.body.appendChild(iframe);
+  setTimeout(() => {
+    document.body.removeChild(iframe);
+    showToast('✓ Đã gửi lên Google Sheets!');
+  }, 3000);
 }
-
-// Giữ lại hàm cũ để không crash nếu còn tham chiếu
-function sendToSheets() { sendToSheetsV2(); }
-function sendViaForm(url, jsonData) { sendViaGet(url, jsonData); }
 function buildScriptCode() {
+  const teacher = config.teacher || 'Giáo viên chủ nhiệm';
   const code = `// ============================================================
-// APPS SCRIPT – Tổng hợp vi phạm từ 4 Tổ Trưởng → Google Sheets
-// Tác giả: Hệ thống Nhật Ký Vi Phạm
-// ============================================================
-// HƯỚNG DẪN CÀI ĐẶT:
-//  1. Mở Google Sheets → Tiện ích mở rộng → Apps Script
-//  2. Xóa hết code cũ, dán toàn bộ file này vào → Lưu (Ctrl+S)
-//  3. Chạy hàm setupSheets() 1 lần để tạo cấu trúc sheet
-//  4. Deploy → New deployment → Web App
-//     - Execute as: Me
-//     - Who has access: Anyone
-//  5. Deploy → Copy URL → Dán vào ô URL trong công cụ Tổ Trưởng
+// APPS SCRIPT – Nhận dữ liệu từ Tổ Trưởng & Gửi Email PH
+// Dán vào: Google Sheets → Tiện ích mở rộng → Apps Script
+// Deploy as Web App → Anyone → Lấy URL dán vào công cụ
 // ============================================================
 
-// ── CẤU HÌNH ──────────────────────────────────────────────────────────────────
-const SHEET_TONG_HOP  = '📊 Tổng hợp';        // Sheet tổng hợp tất cả tuần
-const SHEET_LOG       = '📋 Lịch sử gửi';      // Log mỗi lần tổ trưởng gửi
-const SHEET_PREFIX    = 'Tuần ';               // Sheet riêng cho mỗi tuần: "Tuần 1", "Tuần 2"...
-
-// Màu xếp loại
-const COLORS = {
-  'Tốt':      { bg: '#d1fae5', fg: '#065f46' },
-  'Khá':      { bg: '#dbeafe', fg: '#1e40af' },
-  'Đạt':      { bg: '#fef3c7', fg: '#92400e' },
-  'Chưa đạt': { bg: '#fee2e2', fg: '#991b1b' },
-};
-const HEADER_BG = '#1e3a5f';
-const HEADER_FG = '#ffffff';
-
-// ── ENTRY POINTS ──────────────────────────────────────────────────────────────
 function doGet(e) {
+  // Nhận data qua GET param (fallback khi CORS chặn POST)
   try {
-    if (e && e.parameter && e.parameter.data) {
+    if (e.parameter && e.parameter.data) {
       const payload = JSON.parse(decodeURIComponent(e.parameter.data));
-      processPayload(payload);
+      if (payload.type === 'weekData') saveWeekData(payload.data);
     }
   } catch(err) {
     Logger.log('doGet error: ' + err.message);
   }
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'ok' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
-    processPayload(payload);
+    if (payload.type === 'weekData') saveWeekData(payload.data);
   } catch(err) {
     Logger.log('doPost error: ' + err.message);
   }
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'ok' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
 }
 
-// ── XỬ LÝ DỮ LIỆU CHÍNH ──────────────────────────────────────────────────────
-function processPayload(payload) {
-  if (!payload || payload.type !== 'weekData') return;
-  const data    = payload.data || [];
-  const week    = String(payload.week || (data[0] && data[0].week) || '?');
-  const className = payload.className || (data[0] && data[0].className) || '';
-
-  if (!data.length) return;
-
-  ensureBaseSheets();
-  writeWeekSheet(data, week, className);
-  updateTongHop(data, week, className);
-  writeLog(data, week, className);
-}
-
-// ── TẠO/ĐẢM BẢO CÁC SHEET CƠ BẢN ─────────────────────────────────────────────
-function ensureBaseSheets() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // Sheet Tổng hợp
-  if (!ss.getSheetByName(SHEET_TONG_HOP)) {
-    const sh = ss.insertSheet(SHEET_TONG_HOP, 0);
-    const headers = ['Tuần','Lớp','Tổng HS','Tốt','Khá','Đạt','Chưa đạt','Điểm TB','HS vi phạm nhiều nhất','Cập nhật lần cuối'];
-    sh.appendRow(headers);
-    styleHeader(sh, 1, headers.length);
-    sh.setColumnWidths(1, headers.length, [60,80,80,60,60,60,80,80,160,160]);
-  }
-
-  // Sheet Log
-  if (!ss.getSheetByName(SHEET_LOG)) {
-    const sh = ss.insertSheet(SHEET_LOG, 1);
-    const headers = ['Thời gian','Tổ gửi','Tuần','Số HS','Người gửi','Lớp'];
-    sh.appendRow(headers);
-    styleHeader(sh, 1, headers.length);
-    sh.setColumnWidths(1, headers.length, [160,80,60,60,140,80]);
-  }
-}
-
-// ── GHI SHEET TUẦN ─────────────────────────────────────────────────────────────
-function writeWeekSheet(data, week, className) {
-  const ss        = SpreadsheetApp.getActiveSpreadsheet();
-  const sheetName = SHEET_PREFIX + week;
-
-  let sh = ss.getSheetByName(sheetName);
-  if (!sh) {
-    sh = ss.insertSheet(sheetName);
-  }
-
-  // Xác định dòng hiện tại của từng tổ (xóa dữ liệu tổ đó, giữ tổ khác)
-  const toValue = data[0] ? data[0].to : null; // "Tổ 1" / "Tổ 2" / ...
-
-  // Nếu sheet chưa có header → tạo header
-  const hasHeader = sh.getLastRow() > 0 && sh.getRange(1,1).getValue() === 'STT';
-  if (!hasHeader) {
-    const headers = ['STT','Họ và tên','Tổ','Điểm','Xếp loại','+ Cộng','− Trừ','Vi phạm theo ngày','Tổng buổi nghỉ','Hành động','Email PH','Cập nhật'];
-    sh.appendRow(headers);
-    styleHeader(sh, 1, headers.length);
-    sh.setFrozenRows(1);
-    sh.setColumnWidths(1, headers.length, [40,160,50,60,80,60,60,300,100,140,180,140]);
-  }
-
-  // Xóa các dòng thuộc tổ này (giữ dòng header và dòng tổ khác)
-  if (toValue && sh.getLastRow() > 1) {
-    const allData = sh.getRange(2, 1, sh.getLastRow()-1, 3).getValues();
-    // Xóa từ dưới lên để index không lệch
-    for (let i = allData.length - 1; i >= 0; i--) {
-      if (String(allData[i][2]) === toValue) {
-        sh.deleteRow(i + 2);
-      }
-    }
-  }
-
-  // Thêm dữ liệu mới
-  const now = new Date().toLocaleString('vi-VN');
-  let stt = sh.getLastRow(); // STT liên tục
-
-  data.forEach(row => {
-    stt++;
-    const rowData = [
-      stt,
-      row.name,
-      row.to,
-      row.score,
-      row.rank,
-      row.plus,
-      row.minus,
-      row.violations || 'Không vi phạm',
-      row.totalAbsence || 0,
-      row.action || 'Không',
-      row.email || '',
-      now
-    ];
-    sh.appendRow(rowData);
-
-    // Tô màu theo xếp loại
-    const lastRow = sh.getLastRow();
-    const c = COLORS[row.rank] || COLORS['Chưa đạt'];
-    sh.getRange(lastRow, 1, 1, 12).setBackground(c.bg);
-    sh.getRange(lastRow, 5).setFontColor(c.fg).setFontWeight('bold'); // cột Xếp loại
-    if (row.score < 17) sh.getRange(lastRow, 4).setFontColor('#dc2626'); // Điểm đỏ nếu < 17
-    if (row.violations && row.violations !== 'Không vi phạm') {
-      sh.getRange(lastRow, 8).setFontColor('#dc2626'); // Vi phạm màu đỏ
-    }
-  });
-
-  // Sắp xếp theo Tổ rồi theo Họ tên
-  if (sh.getLastRow() > 2) {
-    sh.getRange(2, 1, sh.getLastRow()-1, 12).sort([{column:3, ascending:true},{column:2, ascending:true}]);
-    // Cập nhật lại STT sau khi sort
-    for (let i = 2; i <= sh.getLastRow(); i++) {
-      sh.getRange(i, 1).setValue(i - 1);
-    }
-  }
-}
-
-// ── CẬP NHẬT SHEET TỔNG HỢP ──────────────────────────────────────────────────
-function updateTongHop(data, week, className) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sh = ss.getSheetByName(SHEET_TONG_HOP);
-  if (!sh) return;
-
-  // Tính thống kê toàn bộ tuần (đọc từ sheet tuần vừa ghi)
-  const weekSheet   = ss.getSheetByName(SHEET_PREFIX + week);
-  let allStudents   = [];
-  if (weekSheet && weekSheet.getLastRow() > 1) {
-    const vals = weekSheet.getRange(2, 1, weekSheet.getLastRow()-1, 12).getValues();
-    allStudents = vals.map(r => ({
-      name: r[1], to: r[2], score: r[3], rank: r[4],
-      violations: r[7], totalAbsence: r[8]
-    }));
-  }
-
-  if (!allStudents.length) return;
-
-  const total   = allStudents.length;
-  const counts  = { 'Tốt':0,'Khá':0,'Đạt':0,'Chưa đạt':0 };
-  let scoreSum  = 0;
-  let worstName = '', worstViolations = '';
-  allStudents.forEach(s => {
-    counts[s.rank] = (counts[s.rank]||0) + 1;
-    scoreSum += Number(s.score) || 0;
-    if (s.violations && s.violations !== 'Không vi phạm' && s.violations.length > worstViolations.length) {
-      worstName = s.name;
-      worstViolations = s.violations;
-    }
-  });
-  const avg = (scoreSum / total).toFixed(2);
-  const now = new Date().toLocaleString('vi-VN');
-
-  // Tìm dòng tuần này nếu đã có
-  const allRows = sh.getDataRange().getValues();
-  let targetRow = -1;
-  for (let i = 1; i < allRows.length; i++) {
-    if (String(allRows[i][0]) === String(week)) { targetRow = i + 1; break; }
-  }
-
-  const rowData = [week, className, total, counts['Tốt'], counts['Khá'], counts['Đạt'], counts['Chưa đạt'], avg, worstName ? \`\${worstName}: \${worstViolations.substring(0,80)}\` : 'Không', now];
-
-  if (targetRow > 0) {
-    sh.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);
+function saveWeekData(data) {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const week  = data[0]?.week || '?';
+  const sheetName = 'Tuần ' + week;
+  
+  let sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(['Họ tên','Email PH','Tổ','Điểm','Xếp loại','Hành động','Vi phạm theo ngày','Vi phạm HTML','Điểm cộng','Điểm trừ','Tổng buổi nghỉ','Tuần']);
+    sheet.getRange(1,1,1,12).setFontWeight('bold').setBackground('#1a3a6b').setFontColor('#ffffff');
   } else {
-    sh.appendRow(rowData);
-    targetRow = sh.getLastRow();
+    const lastRow = sheet.getLastRow();
+    if (lastRow > 1) sheet.getRange(2,1,lastRow-1,12).clearContent();
   }
+  
+  data.forEach(row => {
+    sheet.appendRow([row.name, row.email, row.to, row.score, row.rank, row.action||'', row.violations, row.violationsHtml||'', row.plus, row.minus, row.totalAbsence||0, row.week]);
+  });
+  
+  data.forEach((row,i) => {
+    let color = '#d1fae5';
+    if (row.rank==='Khá') color = '#dbeafe';
+    if (row.rank==='Đạt') color = '#fef3c7';
+    if (row.rank==='Chưa đạt') color = '#fee2e2';
+    sheet.getRange(i+2,1,1,12).setBackground(color);
+  });
 
-  // Tô màu dòng tổng hợp
-  const avgNum = parseFloat(avg);
-  const rowColor = avgNum >= 17 ? COLORS['Tốt'].bg : avgNum >= 14 ? COLORS['Khá'].bg : avgNum >= 11 ? COLORS['Đạt'].bg : COLORS['Chưa đạt'].bg;
-  sh.getRange(targetRow, 1, 1, rowData.length).setBackground(rowColor);
+  // Gửi email cảnh báo buổi nghỉ nếu có
+  data.forEach(row => {
+    if (row.pendingAbsenceAlert && row.email) {
+      guiEmailCanhBaoNghi(row);
+    }
+  });
 }
 
-// ── GHI LOG ───────────────────────────────────────────────────────────────────
-function writeLog(data, week, className) {
-  const ss  = SpreadsheetApp.getActiveSpreadsheet();
-  const sh  = ss.getSheetByName(SHEET_LOG);
-  if (!sh) return;
-  const toValue   = data[0] ? data[0].to : '?';
-  const submitter = data[0] ? (data[0].submittedBy || toValue) : toValue;
-  sh.appendRow([new Date().toLocaleString('vi-VN'), toValue, week, data.length, submitter, className]);
+function guiEmailCanhBaoNghi(row) {
+  const teacher = row.teacher || 'Giáo viên chủ nhiệm';
+  const moc = row.pendingAbsenceAlert;
+  const subject = '⚠️ CẢNH BÁO: ' + row.name + ' đã nghỉ ' + row.totalAbsence + ' buổi – Mời họp phụ huynh';
+
+  const body = 'Kính gửi Quý phụ huynh em ' + row.name + ',\\n\\n'
+    + teacher + ' xin thông báo: Tính đến nay, em ' + row.name + ' (' + row.to + ') đã nghỉ học tổng cộng '
+    + row.totalAbsence + ' buổi (cả có phép và không phép).\\n\\n'
+    + 'Theo quy định của nhà trường, khi học sinh nghỉ học đạt mốc ' + moc + ' buổi, nhà trường kính mời '
+    + 'Quý phụ huynh đến trường để trao đổi về tình hình học tập và chuyên cần của em.\\n\\n'
+    + 'Kính mong Quý phụ huynh sắp xếp thời gian liên hệ với ' + teacher + ' để được tư vấn và hỗ trợ kịp thời.\\n\\n'
+    + 'Trân trọng,\\n' + teacher + '\\nTrường THCS Lương Phi – Xã Ô Lâm, Tri Tôn, An Giang';
+
+  const htmlBody = '<div style="font-family:Arial,sans-serif;max-width:600px;color:#1e293b;">'
+    + '<div style="background:#7f1d1d;padding:16px 24px;border-radius:12px 12px 0 0;">'
+    + '<h2 style="color:#fff;margin:0;font-size:16px;">⚠️ Cảnh Báo Nghỉ Học – Mời Họp Phụ Huynh</h2></div>'
+    + '<div style="background:#fef2f2;padding:20px 24px;border:1px solid #fecaca;border-top:none;border-radius:0 0 12px 12px;">'
+    + '<p>Kính gửi Quý phụ huynh em <b>' + row.name + '</b> (' + row.to + '),</p>'
+    + '<div style="background:#fff;border:2px solid #fca5a5;border-radius:10px;padding:16px;margin:14px 0;text-align:center;">'
+    + '<div style="font-size:48px;font-weight:900;color:#dc2626;line-height:1;">' + row.totalAbsence + '</div>'
+    + '<div style="font-size:14px;font-weight:700;color:#dc2626;margin-top:4px;">BUỔI NGHỈ HỌC</div>'
+    + '<div style="font-size:12px;color:#64748b;margin-top:4px;">(tính cả có phép và không phép)</div></div>'
+    + '<div style="background:#fff3cd;border:1px solid #fde68a;border-radius:10px;padding:14px;margin:10px 0;">'
+    + '<b style="color:#92400e;">📢 Thông báo:</b> Em ' + row.name + ' đã đạt mốc <b>' + moc + ' buổi nghỉ</b>. '
+    + 'Nhà trường kính mời Quý phụ huynh đến trường để trao đổi về tình hình học tập và chuyên cần của em.</div>'
+    + '<p style="color:#475569;margin-top:14px;">Kính mong Quý phụ huynh liên hệ <b>' + teacher + '</b> để sắp xếp lịch họp phù hợp.</p>'
+    + '<p style="color:#475569;">Trân trọng,<br><b>' + teacher + '</b><br>'
+    + '<i style="font-size:12px;">Trường THCS Lương Phi – Xã Ô Lâm, Tri Tôn, An Giang</i></p>'
+    + '</div></div>';
+
+  try {
+    GmailApp.sendEmail(row.email, subject, body, { htmlBody, name: teacher });
+    // Gửi nhắc nhở cho chính GV (email đang chạy script)
+    const myEmail = Session.getActiveUser().getEmail();
+    GmailApp.sendEmail(myEmail, '[NHẮC GV] ' + subject, body, { htmlBody, name: 'Hệ thống tự động' });
+  } catch(err) {
+    Logger.log('Lỗi gửi cảnh báo nghỉ: ' + err.message);
+  }
 }
 
-// ── STYLE HELPERS ─────────────────────────────────────────────────────────────
-function styleHeader(sh, row, numCols) {
-  const range = sh.getRange(row, 1, 1, numCols);
-  range.setBackground(HEADER_BG)
-       .setFontColor(HEADER_FG)
-       .setFontWeight('bold')
-       .setFontSize(11)
-       .setHorizontalAlignment('center')
-       .setWrap(true);
+// ============================================================
+function guiEmailCuoiTuan() {
+  const ss   = SpreadsheetApp.getActiveSpreadsheet();
+  const ui   = SpreadsheetApp.getUi();
+  
+  // Hỏi tuần nào
+  const resp = ui.prompt('Gửi email tuần nào? (nhập số tuần)', ui.ButtonSet.OK_CANCEL);
+  if (resp.getSelectedButton() !== ui.Button.OK) return;
+  const week = resp.getResponseText().trim();
+  
+  const sheet = ss.getSheetByName('Tuần ' + week);
+  if (!sheet) { ui.alert('Không tìm thấy sheet "Tuần ' + week + '"!'); return; }
+  
+  const data = sheet.getDataRange().getValues();
+  let sent = 0, skip = 0;
+  
+  for (let i = 1; i < data.length; i++) {
+    const name          = data[i][0];
+    const email         = data[i][1];
+    const to            = data[i][2];
+    const score         = data[i][3];
+    const rank          = data[i][4];
+    const action        = data[i][5];
+    const vipham        = data[i][6];
+    const violationsHtml= data[i][7];
+    const plus          = data[i][8];
+    const minus         = data[i][9];
+    
+    if (!email) { skip++; continue; }
+    
+    const subject = 'Thông báo vi phạm nội quy – Tuần ' + week;
+    const body    = buildEmailBody(name, to, week, score, rank, action, vipham, plus, minus);
+    const htmlBody= buildEmailHtml(name, to, week, score, rank, action, vipham, violationsHtml, plus, minus);
+    
+    try {
+      GmailApp.sendEmail(email, subject, body, {
+        htmlBody: htmlBody,
+        name: '${teacher}'
+      });
+      sent++;
+      Utilities.sleep(400);
+    } catch(err) {
+      Logger.log('Lỗi gửi ' + email + ': ' + err.message);
+      skip++;
+    }
+  }
+  
+  ui.alert('✅ Hoàn tất!\\n\\nĐã gửi: ' + sent + ' email\\nBỏ qua: ' + skip);
 }
 
-// ── SETUP (chạy 1 lần khi cài đặt) ───────────────────────────────────────────
-function setupSheets() {
-  ensureBaseSheets();
-  SpreadsheetApp.getUi().alert(
-    '✅ Thiết lập hoàn tất!\\n\\n' +
-    'Đã tạo:\\n' +
-    '• Sheet "📊 Tổng hợp" – tóm tắt từng tuần\\n' +
-    '• Sheet "📋 Lịch sử gửi" – log mỗi lần tổ trưởng gửi\\n\\n' +
-    'Tiếp theo:\\n' +
-    '1. Bấm Deploy → New deployment → Web App\\n' +
-    '2. Execute as: Me | Who has access: Anyone\\n' +
-    '3. Deploy → Copy URL → Dán vào công cụ Tổ Trưởng'
-  );
+function buildEmailBody(name, to, week, score, rank, action, vipham, plus, minus) {
+  let text = 'Kính gửi Quý phụ huynh em ' + name + ',\\n\\n';
+  text += '${teacher} xin thông báo kết quả rèn luyện tuần ' + week + ' của em ' + name + ' (' + to + '):\\n\\n';
+  text += '• Điểm rèn luyện: ' + score + '/20 – Xếp loại: ' + rank + '\\n';
+  text += '• Điểm thưởng (điểm ≥8): +' + plus + '\\n';
+  text += '• Điểm trừ vi phạm: -' + minus + '\\n\\n';
+  if (vipham && vipham !== 'Không vi phạm') {
+    text += 'Chi tiết vi phạm theo ngày:\\n';
+    vipham.split(' | ').forEach(v => { text += '  • ' + v.trim() + '\\n'; });
+    text += '\\n';
+  } else {
+    text += 'Tuần này em không có vi phạm.\\n\\n';
+  }
+  if (action) text += '⚠️ Yêu cầu: Em ' + name + ' cần ' + action.toLowerCase() + ' theo quy định nhà trường.\\n\\n';
+  text += 'Kính mong Quý phụ huynh quan tâm, nhắc nhở và phối hợp cùng nhà trường.\\n\\nTrân trọng,\\n${teacher}';
+  return text;
 }
-`;
+
+function buildEmailHtml(name, to, week, score, rank, action, vipham, violationsHtml, plus, minus) {
+  const rankColor = rank==='Tốt'?'#059669':rank==='Khá'?'#2563eb':rank==='Đạt'?'#d97706':'#dc2626';
+  let html = '<div style="font-family:Arial,sans-serif;max-width:600px;color:#1e293b;">';
+  html += '<div style="background:#1a3a6b;padding:16px 24px;border-radius:12px 12px 0 0;">';
+  html += '<h2 style="color:#fff;margin:0;font-size:16px;">📋 Thông Báo Kết Quả Rèn Luyện – Tuần ' + week + '</h2></div>';
+  html += '<div style="background:#f8fafc;padding:20px 24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">';
+  html += '<p>Kính gửi Quý phụ huynh em <b>' + name + '</b> (' + to + '),</p>';
+  // Score box
+  html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin:14px 0;">';
+  html += '<div style="display:flex;align-items:center;gap:16px;">';
+  html += '<div style="font-size:48px;font-weight:900;color:' + rankColor + ';line-height:1;">' + score + '</div>';
+  html += '<div><div style="font-size:11px;color:#64748b;font-weight:600;letter-spacing:.5px;">ĐIỂM RÈN LUYỆN TUẦN ' + week + '</div>';
+  html += '<div style="font-size:20px;font-weight:800;color:' + rankColor + ';">' + rank + '</div>';
+  html += '<div style="font-size:12px;color:#64748b;margin-top:4px;">20 + ' + plus + ' thưởng - ' + minus + ' vi phạm = ' + score + '</div></div></div></div>';
+  // Vi phạm theo ngày
+  const hasVipham = vipham && vipham !== 'Không vi phạm';
+  if (hasVipham) {
+    html += '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin:10px 0;">';
+    html += '<b style="color:#dc2626;">⚠️ Chi tiết vi phạm theo ngày:</b>';
+    // Dùng violationsHtml nếu có (dạng <li>), không thì parse từ vipham
+    if (violationsHtml) {
+      html += '<ul style="margin:8px 0 0;padding-left:20px;line-height:1.9;">' + violationsHtml + '</ul>';
+    } else {
+      html += '<ul style="margin:8px 0 0;padding-left:20px;line-height:1.9;">';
+      vipham.split(' | ').forEach(v => { html += '<li>' + v.trim() + '</li>'; });
+      html += '</ul>';
+    }
+    html += '</div>';
+  } else {
+    html += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;margin:10px 0;color:#166534;">✅ Tuần này em không có vi phạm.</div>';
+  }
+  // Hành động
+  if (action && action !== 'Không') {
+    html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin:10px 0;">';
+    html += '<b style="color:#92400e;">📝 Yêu cầu:</b> Em ' + name + ' cần <b>' + action.toLowerCase() + '</b> theo quy định nhà trường.</div>';
+  }
+  html += '<p style="color:#475569;margin-top:14px;">Kính mong Quý phụ huynh quan tâm, nhắc nhở và phối hợp cùng nhà trường.</p>';
+  html += '<p style="color:#475569;">Trân trọng,<br><b>${teacher}</b></p>';
+  html += '<div style="margin-top:16px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center;">Email được gửi tự động từ hệ thống quản lý rèn luyện lớp.</div>';
+  html += '</div></div>';
+  return html;
+}`;
   document.getElementById('scriptCodeArea').value = code;
 }
 
@@ -1717,21 +1460,132 @@ function copyScript() {
 
 // ── NAV TABS ──────────────────────────────────────────────────────────────────
 function switchMainTab(tab) {
-  ['Nhap','Tuan','Gui'].forEach(t => {
+  ['Nhap','Tuan','Gui','Ql'].forEach(t => {
     const lower = t.toLowerCase();
-    const panelId = 'panel'+t;
-    const tabId = 'tab'+t;
-    document.getElementById(panelId).style.display = (lower===tab)?'block':'none';
-    document.getElementById(tabId).classList.toggle('active', lower===tab);
+    document.getElementById('panel'+t).style.display = (lower===tab)?'block':'none';
+    document.getElementById('tab'+t).classList.toggle('active', lower===tab);
   });
   if (tab==='tuan') renderWeekSummary();
-  if (tab==='gui') {
-    const u=localStorage.getItem('scriptUrl');
-    if(u) { document.getElementById('scriptUrl').value=u; saveScriptUrl(); }
-    updateSendPreview();
-  }
+  if (tab==='gui') { const u=localStorage.getItem('scriptUrl'); if(u) document.getElementById('scriptUrl').value=u; }
+  if (tab==='ql') populateMoveStudentList();
   if (tab!=='nhap') document.getElementById('saveBar').classList.remove('show');
   else if (selectedId) document.getElementById('saveBar').classList.add('show');
+}
+
+// ── CHUYỂN TỔ ─────────────────────────────────────────────────────────────────
+function populateMoveStudentList() {
+  const sel = document.getElementById('moveStudentSel');
+  sel.innerHTML = '<option value="">-- Chọn học sinh --</option>';
+  // Nhóm theo tổ cho dễ chọn
+  [1,2,3,4].forEach(to => {
+    const inTo = config.students.filter(s => s.to === String(to));
+    if (!inTo.length) return;
+    const grp = document.createElement('optgroup');
+    grp.label = '📌 Tổ ' + to;
+    inTo.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
+  });
+  document.getElementById('moveStudentInfo').style.display = 'none';
+}
+
+function onMoveStudentChange() {
+  const id = document.getElementById('moveStudentSel').value;
+  const info = document.getElementById('moveStudentInfo');
+  if (!id) { info.style.display = 'none'; return; }
+  const s = config.students.find(x => x.id === id);
+  if (!s) return;
+  const ws = calcWeekScore(s.id);
+  const totalDays = (weekData[s.id]?.days||[]).length;
+  info.style.display = 'block';
+  info.innerHTML = `
+    <b>${s.name}</b> – Hiện đang ở <b>Tổ ${s.to}</b><br>
+    📊 Điểm tuần hiện tại: <b>${ws.score} (${ws.rank})</b> &nbsp;|&nbsp; Tổng ngày đã nhập: <b>${totalDays} ngày</b><br>
+    <span style="color:#94a3b8;font-size:12px;">⚡ Toàn bộ lịch sử điểm sẽ được giữ nguyên sau khi chuyển tổ.</span>
+  `;
+  // Preset dropdown tổ mới = tổ khác với tổ hiện tại
+  const nextTo = s.to === '4' ? '1' : String(Number(s.to)+1);
+  document.getElementById('moveToSel').value = nextTo;
+}
+
+function doMoveStudent() {
+  const id = document.getElementById('moveStudentSel').value;
+  if (!id) { showToast('Vui lòng chọn học sinh!', true); return; }
+  const s = config.students.find(x => x.id === id);
+  const newTo = document.getElementById('moveToSel').value;
+  if (s.to === newTo) { showToast(`${s.name} đã ở Tổ ${newTo} rồi!`, true); return; }
+
+  const oldTo = s.to;
+  s.to = newTo;
+  saveAll();
+  renderStudentGrid();
+  populateMoveStudentList();
+  document.getElementById('moveStudentInfo').style.display = 'none';
+  showToast(`✅ Đã chuyển ${s.name} từ Tổ ${oldTo} → Tổ ${newTo}. Lịch sử điểm giữ nguyên.`);
+}
+
+// ── BACKUP & RESTORE ──────────────────────────────────────────────────────────
+function exportBackup() {
+  const data = localStorage.getItem('to_truong_v1');
+  if (!data) { showToast('Không có dữ liệu để xuất!', true); return; }
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  const now = new Date();
+  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `backup-to-truong-${config.className||'lop'}-${stamp}.json`;
+  a.click();
+  showToast('✅ Đã xuất file backup JSON!');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.config || !data.weekData) throw new Error('File không đúng định dạng');
+      if (!confirm(`Phục hồi dữ liệu lớp "${data.config.className}" từ file này?\nToàn bộ dữ liệu hiện tại sẽ bị thay thế.`)) return;
+      localStorage.setItem('to_truong_v1', JSON.stringify(data));
+      location.reload();
+    } catch(err) {
+      showToast('❌ File lỗi hoặc không đúng định dạng!', true);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // reset để có thể chọn lại
+}
+
+// ── NĂM HỌC MỚI ──────────────────────────────────────────────────────────────
+function confirmNewYear() {
+  const cls = config.className || 'lớp này';
+  const count = config.students.length;
+  if (!confirm(
+    `⚠️ BẮT ĐẦU NĂM HỌC MỚI\n\n` +
+    `Lớp: ${cls} – ${count} học sinh\n\n` +
+    `✅ GIỮ NGUYÊN: Danh sách học sinh, tên GV, tên lớp\n` +
+    `❌ XÓA SẠCH: Điểm, vi phạm, buổi nghỉ, lịch sử tuần\n\n` +
+    `Bạn đã xuất backup JSON chưa?\nBấm OK để xác nhận xóa điểm.`
+  )) return;
+
+  // Reset weekData, giữ nguyên config.students
+  weekData = {};
+  config.students.forEach(s => {
+    weekData[s.id] = { days:[], weekScore:20, rank:'Tốt', action:'', timesLow:0 };
+  });
+  todayData = {};
+  selectedId = null;
+  saveAll();
+  renderStudentGrid();
+  document.getElementById('inputPanel').style.display = 'none';
+  document.getElementById('saveBar').classList.remove('show');
+  switchMainTab('nhap');
+  showToast('🎉 Đã xóa sạch điểm! Danh sách học sinh giữ nguyên. Sẵn sàng năm học mới!');
 }
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
